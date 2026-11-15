@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# 部署产物（这些是临时/开发文件，不进代码库）
+_deploy/
+宝箧印网站-部署包.zip
+
+# 音频（已在阿里云 OSS，代码里 FAYIN_CDN 指向云端，本地不纳入版本库）
+assets/*.m4a
+
+# 开发/验证文件
+validate_play.js
+上线手册-独立域名.md
+
+# 依赖 / 缓存
+node_modules/
+*.log
