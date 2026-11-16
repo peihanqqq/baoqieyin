@@ -3010,9 +3010,9 @@ titleStart();                 /* 收起时，经名于四种语言中缓缓轮�
 ================================================================ */
 let playing=false, paused=false;
 /* --- 法音诸版：法会版（约两小时）/ 快念版（二十一遍 · 58 秒自计） --- */
-/* 音频 CDN 前缀：上线时把两段 m4a 上传到对象存储（如 Cloudflare R2），填上其公开地址前缀即可；
+/* 音频 CDN 前缀：音频托管在 GitHub Release（走 release-assets CDN，支持 Range 与大文件）。
    留空则回退到本地 assets/（本地预览与未上传音频时可用）。示例：'https://你的域名/audio' */
-const FAYIN_CDN='https://raw.githubusercontent.com/peihanqqq/baoqieyin/main/assets';
+const FAYIN_CDN='https://github.com/peihanqqq/baoqieyin/releases/download/audio-v1';
 const FAYIN_BASE=FAYIN_CDN ? (FAYIN_CDN.replace(/\/+$/,'')+'/') : 'assets/';
 const FAYIN_VERSIONS=[
   {name:'法会版',nameEn:'Full Assembly',label:'法会两小时',labelEn:'Full · 2 Hours',file:FAYIN_BASE+'recitation.m4a',dur:6021,desc:'众缘和合 · 全本共修 · 约两小时'},
