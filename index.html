@@ -1063,6 +1063,12 @@ body.night .lang-toggle{background:rgba(38,32,25,.9);color:#d9cfbc;border-color:
 .gk-stat{background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:13px 8px;text-align:center;}
 .gk-stat .v{font-size:20px;font-weight:600;color:var(--cinnabar-deep);line-height:1.1;font-variant-numeric:tabular-nums;}
 .gk-stat .l{font-size:11px;color:var(--muted);letter-spacing:.18em;text-indent:.18em;margin-top:6px;}
+
+/* 详情切换按钮 + 数字隐藏态 */
+.gk-detail-btn{display:block;margin:0 auto 18px;padding:6px 22px;border:1px solid var(--line);background:transparent;border-radius:20px;font-family:var(--serif-sc);font-size:12px;letter-spacing:.3em;text-indent:.3em;color:var(--muted);cursor:pointer;transition:background .2s,color .2s,border-color .2s;}
+.gk-detail-btn:hover{background:var(--wash);color:var(--cinnabar-deep);border-color:rgba(157,58,44,.35);}
+.gk-detail-btn.on{color:var(--cinnabar-deep);border-color:rgba(157,58,44,.35);background:var(--wash);}
+.gk-stat .v.hidden{color:var(--muted);letter-spacing:.06em;font-weight:400;}
 .gk-map{position:relative;border:1px solid var(--line);border-radius:3px;background:var(--paper);overflow:hidden;box-shadow:0 4px 18px rgba(43,38,32,.06);}
 .gk-map svg{display:block;width:100%;height:auto;}
 .gk-zoom{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:4px;z-index:5;}
@@ -1785,11 +1791,12 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
       </div>
       <div class="gk-total"><span class="num" id="gk-total-num">—</span><span class="unit" data-i18n="global.unit">遍</span></div>
       <div class="gk-total-label" data-i18n="global.totalLabel">全 球 累 计 诵 持</div>
-      <div class="gk-stats">
-        <div class="gk-stat"><div class="v" id="gk-stat-city">—</div><div class="l" data-i18n="global.city">城 市</div></div>
-        <div class="gk-stat"><div class="v" id="gk-stat-visit">—</div><div class="l" data-i18n="global.visit">访 问 人 次</div></div>
-        <div class="gk-stat"><div class="v" id="gk-stat-country">—</div><div class="l" data-i18n="global.country">国 家 地 区</div></div>
+      <div class="gk-stats" id="gk-stats">
+        <div class="gk-stat"><div class="v" id="gk-stat-city">•••</div><div class="l" data-i18n="global.city">城 市</div></div>
+        <div class="gk-stat"><div class="v" id="gk-stat-visit">•••</div><div class="l" data-i18n="global.visit">访 问 人 次</div></div>
+        <div class="gk-stat"><div class="v" id="gk-stat-country">•••</div><div class="l" data-i18n="global.country">国 家 地 区</div></div>
       </div>
+      <button type="button" class="gk-detail-btn" id="gk-detail-btn" onclick="gkToggleDetail()">详 情</button>
       <div class="gk-map" id="gk-map">
         <div class="gk-zoom">
           <button type="button" onclick="window.__gkZoom&&__gkZoom.zoomIn()" aria-label="放大" data-i18n-title="global.zoomIn" title="放大">＋</button>
@@ -5697,11 +5704,13 @@ function gkApplyStats(data, countryPaths){
     countryPaths[nid].setAttribute('fill', col);
   });
 
-  /* 顶部数字 */
-  document.getElementById('gk-total-num').textContent = (data.totalRecites||0).toLocaleString('zh-CN');
-  document.getElementById('gk-stat-country').textContent = (data.countryCount||0);
-  document.getElementById('gk-stat-visit').textContent = (data.totalVisits||0).toLocaleString('zh-CN');
-  document.getElementById('gk-stat-city').textContent = (data.cityCount||0);
+  /* 顶部数字：缓存真实值，按「详情」开关决定显示或隐藏 */
+  gkApplyStatsValues(
+    (data.totalRecites||0).toLocaleString('zh-CN'),
+    (data.cityCount||0),
+    (data.totalVisits||0).toLocaleString('zh-CN'),
+    (data.countryCount||0)
+  );
 
   /* 用真实城市数据重建城市点层 */
   try{ if(window.__gkSetCities && data.cities) window.__gkSetCities(data.cities); }catch(e){}
@@ -5709,6 +5718,47 @@ function gkApplyStats(data, countryPaths){
   /* 更新说明 */
   const note=document.getElementById('gk-note');
   if(note) note.textContent='光谱自冷而暖 · 如灯次第相传 · 点击地区看详情';
+}
+
+/* 缓存 + 展示统计数字（total/city/visit/country），受「详情」开关控制 */
+let gkDetailShown = false;
+function gkApplyStatsValues(total, city, visit, country){
+  window.__gkStatsValues = { total: total, city: city, visit: visit, country: country };
+  gkRenderStatsValues();
+}
+function gkRenderStatsValues(){
+  const v = window.__gkStatsValues;
+  if(!v) return;
+  const totalEl = document.getElementById('gk-total-num');
+  const cityEl = document.getElementById('gk-stat-city');
+  const visitEl = document.getElementById('gk-stat-visit');
+  const countryEl = document.getElementById('gk-stat-country');
+  if(gkDetailShown){
+    totalEl.textContent = v.total;
+    cityEl.textContent = v.city;
+    visitEl.textContent = v.visit;
+    countryEl.textContent = v.country;
+    [totalEl, cityEl, visitEl, countryEl].forEach(function(el){ el.classList.remove('hidden'); });
+  }else{
+    totalEl.textContent = '•••';
+    cityEl.textContent = '•••';
+    visitEl.textContent = '•••';
+    countryEl.textContent = '•••';
+    [cityEl, visitEl, countryEl].forEach(function(el){ el.classList.add('hidden'); });
+  }
+}
+function gkToggleDetail(){
+  gkDetailShown = !gkDetailShown;
+  gkRenderStatsValues();
+  gkUpdateDetailBtn();
+}
+/* 按当前语言 + 展开状态更新详情按钮文字 */
+function gkUpdateDetailBtn(){
+  const btn = document.getElementById('gk-detail-btn');
+  if(!btn) return;
+  const isEn = (typeof CUR_LANG!=='undefined' && CUR_LANG==='en');
+  btn.textContent = gkDetailShown ? (isEn?'HIDE':'收 起') : (isEn?'DETAILS':'详 情');
+  if(gkDetailShown) btn.classList.add('on'); else btn.classList.remove('on');
 }
 
 /* 演示数据（无后端时） */
@@ -5721,10 +5771,7 @@ function gkApplyDemo(countryPaths){
     const t = rec/maxRec;
     countryPaths[nid].setAttribute('fill', gkCountryColor(t));
   });
-  document.getElementById('gk-total-num').textContent = '5,750';
-  document.getElementById('gk-stat-country').textContent = '5';
-  document.getElementById('gk-stat-visit').textContent = '1,970';
-  document.getElementById('gk-stat-city').textContent = '5';
+  gkApplyStatsValues('5,750', '5', '1,970', '5');
   const note=document.getElementById('gk-note');
   if(note) note.textContent='演示数据 · 接入后端后展示真实累计';
 }
@@ -5980,6 +6027,8 @@ const I18N = {
   'global.city':    { zh:'城 市', en:'CITIES' },
   'global.visit':   { zh:'访 问 人 次', en:'VISITS' },
   'global.country': { zh:'国 家 地 区', en:'COUNTRIES' },
+  'global.showDetail': { zh:'详 情', en:'DETAILS' },
+  'global.hideDetail': { zh:'收 起', en:'HIDE' },
   'global.zoomIn':  { zh:'放大', en:'Zoom in' },
   'global.zoomOut': { zh:'缩小', en:'Zoom out' },
   'global.zoomReset': { zh:'回到全球', en:'Reset view' },
@@ -6239,6 +6288,7 @@ function applyLang(){
   try{ if(typeof paintModeSwitch==='function') paintModeSwitch(); }catch(e){}
   try{ if(typeof setHint==='function') setHint(); }catch(e){}
   try{ if(typeof paintFayinVers==='function') paintFayinVers(); }catch(e){}
+  try{ if(typeof gkUpdateDetailBtn==='function') gkUpdateDetailBtn(); }catch(e){}
 }
 
 function toggleLang(){
