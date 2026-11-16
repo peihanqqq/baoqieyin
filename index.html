@@ -1056,13 +1056,18 @@ body.night .lang-toggle{background:rgba(38,32,25,.9);color:#d9cfbc;border-color:
 .gk-eyebrow{font-size:11px;letter-spacing:.5em;text-indent:.5em;color:var(--muted);margin-bottom:10px;}
 .gk-title{font-family:var(--serif-sc);font-size:22px;font-weight:600;letter-spacing:.12em;color:var(--cinnabar);}
 .gk-total{display:flex;justify-content:center;align-items:baseline;gap:10px;margin:20px 0 4px;}
-.gk-total .num{font-size:44px;font-weight:600;color:var(--ink);letter-spacing:.02em;line-height:1;font-variant-numeric:tabular-nums;}
+.gk-total .num{font-size:44px;font-weight:600;color:var(--ink);letter-spacing:.02em;line-height:1;font-variant-numeric:tabular-nums;cursor:pointer;position:relative;text-shadow:0 0 18px rgba(168,133,78,.55),0 0 34px rgba(157,58,44,.25);animation:gkGlow 2.6s ease-in-out infinite;}
+.gk-total .num:active{text-shadow:0 0 26px rgba(168,133,78,.8),0 0 48px rgba(157,58,44,.4);}
+@keyframes gkGlow{0%,100%{text-shadow:0 0 14px rgba(168,133,78,.4),0 0 28px rgba(157,58,44,.18);}50%{text-shadow:0 0 26px rgba(168,133,78,.75),0 0 46px rgba(157,58,44,.4);}}
 .gk-total .unit{font-size:14px;color:var(--muted);letter-spacing:.3em;}
 .gk-total-label{text-align:center;font-size:12px;color:var(--muted);letter-spacing:.3em;text-indent:.3em;margin-bottom:18px;}
 .gk-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 18px;}
 .gk-stat{background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:13px 8px;text-align:center;}
 .gk-stat .v{font-size:20px;font-weight:600;color:var(--cinnabar-deep);line-height:1.1;font-variant-numeric:tabular-nums;}
 .gk-stat .l{font-size:11px;color:var(--muted);letter-spacing:.18em;text-indent:.18em;margin-top:6px;}
+/* 详情展开时数字弹出动画 */
+.gk-stat .v.pop{animation:gkStatPop .32s cubic-bezier(.2,.9,.3,1.2) both;}
+@keyframes gkStatPop{from{opacity:0;transform:scale(.6);}to{opacity:1;transform:scale(1);}}
 
 /* 详情切换按钮 + 数字隐藏态 */
 .gk-detail-btn{display:block;margin:0 auto 18px;padding:6px 22px;border:1px solid var(--line);background:transparent;border-radius:20px;font-family:var(--serif-sc);font-size:12px;letter-spacing:.3em;text-indent:.3em;color:var(--muted);cursor:pointer;transition:background .2s,color .2s,border-color .2s;}
@@ -1787,10 +1792,10 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
     <div class="gk-wrap">
       <div class="gk-head">
         <div class="gk-eyebrow" data-i18n="global.eyebrow">全 球 共 读</div>
-        <div class="gk-title" data-i18n="global.title">一 经 传 十 方</div>
+        <div class="gk-title" data-i18n="global.title">共 读</div>
       </div>
-      <div class="gk-total"><span class="num" id="gk-total-num">—</span><span class="unit" data-i18n="global.unit">遍</span></div>
-      <div class="gk-total-label" data-i18n="global.totalLabel">全 球 累 计 诵 持</div>
+      <div class="gk-total" onclick="gkToggleDetail()" role="button" aria-label="查看详情"><span class="num" id="gk-total-num">—</span><span class="unit" data-i18n="global.unit">遍</span></div>
+      <div class="gk-total-label" data-i18n="global.totalLabel">累 计 共 读 次 数</div>
       <div class="gk-stats" id="gk-stats">
         <div class="gk-stat"><div class="v" id="gk-stat-city">•••</div><div class="l" data-i18n="global.city">城 市</div></div>
         <div class="gk-stat"><div class="v" id="gk-stat-visit">•••</div><div class="l" data-i18n="global.visit">访 问 人 次</div></div>
@@ -5741,12 +5746,16 @@ function gkRenderStatsValues(){
     cityEl.textContent = v.city;
     visitEl.textContent = v.visit;
     countryEl.textContent = v.country;
-    [cityEl, visitEl, countryEl].forEach(function(el){ el.classList.remove('hidden'); });
+    [cityEl, visitEl, countryEl].forEach(function(el){
+      el.classList.remove('hidden');
+      /* 弹出动画（重触发） */
+      el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+    });
   }else{
     cityEl.textContent = '•••';
     visitEl.textContent = '•••';
     countryEl.textContent = '•••';
-    [cityEl, visitEl, countryEl].forEach(function(el){ el.classList.add('hidden'); });
+    [cityEl, visitEl, countryEl].forEach(function(el){ el.classList.add('hidden'); el.classList.remove('pop'); });
   }
 }
 function gkToggleDetail(){
@@ -6023,8 +6032,8 @@ const I18N = {
 
   /* 全球共读 */
   'global.eyebrow': { zh:'全 球 共 读', en:'GLOBAL RECITATION' },
-  'global.title':   { zh:'一 经 传 十 方', en:'One Sutra Across the World' },
-  'global.totalLabel': { zh:'全 球 累 计 诵 持', en:'Total Recitations Worldwide' },
+  'global.title':   { zh:'共 读', en:'Reciting Together' },
+  'global.totalLabel': { zh:'累 计 共 读 次 数', en:'Total Shared Recitations' },
   'global.unit':    { zh:'遍', en:'times' },
   'global.city':    { zh:'城 市', en:'CITIES' },
   'global.visit':   { zh:'访 问 人 次', en:'VISITS' },
