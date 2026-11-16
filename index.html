@@ -1074,6 +1074,30 @@ body.night .lang-toggle{background:rgba(38,32,25,.9);color:#d9cfbc;border-color:
 .gk-ayu-legend .ayu-item{display:inline-flex;align-items:center;gap:5px;}
 .gk-ayu-legend .ayu-item i{display:inline-block;width:9px;height:9px;border-radius:50%;}
 .gk-note{text-align:center;font-size:11px;color:var(--muted);letter-spacing:.14em;margin-top:14px;line-height:1.9;}
+
+/* 缩放按钮状态反馈 */
+.gk-zoom button{transition:background .15s,color .15s,opacity .15s,border-color .15s;}
+.gk-zoom button:hover{background:#f3ede1;}
+.gk-zoom button:disabled{opacity:.38;cursor:default;background:rgba(255,253,246,.92);box-shadow:none;}
+
+/* 地图标记悬浮提示（tooltip） */
+.gk-tip{position:fixed;z-index:200;max-width:220px;padding:8px 12px;background:#fffdf6;color:#2b2620;border:1px solid rgba(43,38,32,.16);border-left:3px solid #9d3a2c;border-radius:4px;box-shadow:0 8px 24px rgba(43,38,32,.18);font-family:var(--serif-sc);font-size:12px;line-height:1.6;letter-spacing:.04em;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .16s ease,transform .16s ease;}
+.gk-tip.show{opacity:1;transform:translateY(0);}
+.gk-tip .t{font-weight:600;color:#9d3a2c;letter-spacing:.06em;}
+.gk-tip .d{color:#57503f;margin-top:3px;font-size:11px;}
+body.night .gk-tip{background:#262019;color:#e8e0cd;border-color:rgba(255,255,255,.14);border-left-color:#e39a90;}
+body.night .gk-tip .t{color:#e39a90;}
+body.night .gk-tip .d{color:#b8ad95;}
+
+/* 卡片进入/退出动画 */
+.gk-card{animation:gkCardIn .22s cubic-bezier(.2,.75,.25,1) both;}
+.gk-card.out{animation:gkCardOut .16s ease both;}
+@keyframes gkCardIn{from{opacity:0;transform:translateY(8px) scale(.97);}to{opacity:1;transform:none;}}
+@keyframes gkCardOut{from{opacity:1;transform:none;}to{opacity:0;transform:translateY(6px) scale(.98);}}
+
+/* 标记点悬停放大反馈 */
+.gk-map svg circle[data-hot]{transition:r .15s ease,filter .15s ease;}
+
 body.night .gk-stat{background:#191e21;border-color:rgba(255,255,255,.08);}
 body.night .gk-map{background:#191e21;border-color:rgba(255,255,255,.08);}
 body.night .gk-title{color:#d0574a;}
@@ -5222,6 +5246,39 @@ function renderGlobalMap(){
   bg.setAttribute('fill','#f7f2e6');
   svg.appendChild(bg);
 
+  /* 悬浮提示（tooltip）—— 替换原生 <title>，即时显示、移动端长按 */
+  const tip=document.createElement('div');
+  tip.className='gk-tip';
+  tip.id='gk-tip';
+  document.body.appendChild(tip);
+  let tipTimer=null;
+  function showTip(title, desc, x, y){
+    tip.innerHTML = '<div class="t">'+title+'</div>' + (desc ? '<div class="d">'+desc+'</div>' : '');
+    tip.classList.add('show');
+    /* 定位：跟随鼠标，超出视口则翻转 */
+    const tw=tip.offsetWidth, th=tip.offsetHeight;
+    let px=x+14, py=y+14;
+    if(px+tw>window.innerWidth-8) px=x-tw-14;
+    if(py+th>window.innerHeight-8) py=y-th-14;
+    tip.style.left=px+'px';
+    tip.style.top=py+'px';
+  }
+  function hideTip(){ tip.classList.remove('show'); if(tipTimer){ clearTimeout(tipTimer); tipTimer=null; } }
+  /* 为元素绑定悬浮提示（桌面 hover / 移动端长按） */
+  function bindTip(el, title, desc){
+    let longPress=false, lpTimer=null;
+    el.addEventListener('mouseenter', function(e){ showTip(title, desc, e.clientX, e.clientY); });
+    el.addEventListener('mousemove', function(e){ if(tip.classList.contains('show')) showTip(title, desc, e.clientX, e.clientY); });
+    el.addEventListener('mouseleave', hideTip);
+    /* 移动端：长按 500ms 显示 */
+    el.addEventListener('touchstart', function(e){
+      longPress=false;
+      lpTimer=setTimeout(function(){ longPress=true; showTip(title, desc, e.touches[0].clientX, e.touches[0].clientY); }, 500);
+    }, {passive:true});
+    el.addEventListener('touchmove', function(){ if(lpTimer){ clearTimeout(lpTimer); lpTimer=null; } }, {passive:true});
+    el.addEventListener('touchend', function(){ if(lpTimer){ clearTimeout(lpTimer); lpTimer=null; } if(longPress){ tipTimer=setTimeout(hideTip, 1200); } });
+  }
+
   /* 国家轮廓层（先画底图） */
   const countryPaths = {};
   const countryLayer=document.createElementNS(svgNS,'g');
@@ -5235,10 +5292,9 @@ function renderGlobalMap(){
     p.dataset.cid=id;
     p.dataset.cname=name;
     p.style.cursor='pointer';
-    p.addEventListener('click',function(e){ e.stopPropagation(); gkZoomToCountry(id, name); });
-    const tt=document.createElementNS(svgNS,'title');
-    tt.textContent=name;
-    p.appendChild(tt);
+    p.addEventListener('click',function(e){ e.stopPropagation(); if(dragMoved) return; gkZoomToCountry(id, name); });
+    /* 悬浮提示：显示国名（有统计时带数字） */
+    bindTip(p, name, '');
     countryLayer.appendChild(p);
     countryPaths[id]=p;
   });
@@ -5257,10 +5313,11 @@ function renderGlobalMap(){
     dot.setAttribute('stroke','#f3ede1');
     dot.setAttribute('stroke-width','1');
     dot.style.cursor='pointer';
-    dot.addEventListener('click',function(e){ e.stopPropagation(); gkShowAyuCard(a); });
-    const t=document.createElementNS(svgNS,'title');
-    t.textContent=a[0]+' · '+a[4];
-    dot.appendChild(t);
+    dot.addEventListener('click',function(e){ e.stopPropagation(); if(dragMoved) return; gkShowAyuCard(a); });
+    /* 悬浮提示 + 悬停放大反馈 */
+    bindTip(dot, a[0], a[4]);
+    dot.addEventListener('mouseenter', function(){ dot.setAttribute('r', Math.max(parseFloat(dot.getAttribute('r')),5.5)); dot.setAttribute('filter','drop-shadow(0 0 4px rgba(157,58,44,.5))'); });
+    dot.addEventListener('mouseleave', function(){ applyViewBox(); dot.removeAttribute('filter'); });
     ayuLayer.appendChild(dot);
   });
   svg.appendChild(ayuLayer);
@@ -5269,38 +5326,42 @@ function renderGlobalMap(){
   const cityLayer=document.createElementNS(svgNS,'g');
   cityLayer.setAttribute('class','gk-city-layer');
   cityLayer.style.display='none';   /* 初始隐藏，放大后显示 */
-  const maxCityVal = Math.max.apply(null, GK_CITIES.map(function(c){return c[3];}));
-  GK_CITIES.forEach(function(c){
-    const pt=gkProject(c[1],c[2]);
-    const t=c[3]/maxCityVal;
+  /* 复用：创建一个城市热点（圆 + 标签），返回 circle 元素 */
+  function makeCityDot(name, lon, lat, val, onClick){
+    const pt=gkProject(lon,lat);
+    const t=val/maxCityVal;
     const r=Math.sqrt(t)*9+2;
     const col=gkColor(t);
     const circle=document.createElementNS(svgNS,'circle');
     circle.setAttribute('cx',pt[0]); circle.setAttribute('cy',pt[1]);
     circle.setAttribute('r',r);
-    circle.setAttribute('data-base-r',r);   /* 记录原始半径，供反缩放 */
+    circle.setAttribute('data-base-r',r);
     circle.setAttribute('fill',gkRgb(col));
     circle.setAttribute('fill-opacity','0.8');
     circle.setAttribute('stroke','#f3ede1');
     circle.setAttribute('stroke-width','0.8');
+    circle.setAttribute('data-hot','1');
     circle.style.cursor='pointer';
-    circle.addEventListener('click',function(e){ e.stopPropagation(); gkShowCityCard(c); });
-    const title=document.createElementNS(svgNS,'title');
-    title.textContent=c[0]+' · '+c[3]+' 遍';
-    circle.appendChild(title);
-    /* 城市名标签（放大时显示） */
+    circle.addEventListener('click',function(e){ e.stopPropagation(); if(dragMoved) return; onClick(); });
+    bindTip(circle, name, val+' 遍');
+    circle.addEventListener('mouseenter', function(){ circle.setAttribute('r', Math.max(parseFloat(circle.getAttribute('r')),6.5)); });
+    circle.addEventListener('mouseleave', function(){ applyViewBox(); });
     const label=document.createElementNS(svgNS,'text');
     label.setAttribute('x',pt[0]); label.setAttribute('y',pt[1]-r-3);
     label.setAttribute('text-anchor','middle');
     label.setAttribute('font-size','16');
-    label.setAttribute('data-base-fs','16');   /* 记录原始字号，供反缩放（屏幕恒定≈11px） */
+    label.setAttribute('data-base-fs','16');
     label.setAttribute('fill','#57503f');
     label.setAttribute('class','gk-city-label');
     label.style.display='none';
-    label.textContent=c[0];
-    circle.appendChild(title);
+    label.textContent=name;
     cityLayer.appendChild(circle);
     cityLayer.appendChild(label);
+    return circle;
+  }
+  const maxCityVal = Math.max.apply(null, GK_CITIES.map(function(c){return c[3];}));
+  GK_CITIES.forEach(function(c){
+    makeCityDot(c[0], c[1], c[2], c[3], function(){ gkShowCityCard(c); });
   });
   svg.appendChild(cityLayer);
 
@@ -5313,34 +5374,7 @@ function renderGlobalMap(){
     cities.forEach(function(c){ const v=c.recites||c.visits||0; if(v>maxVal) maxVal=v; });
     cities.forEach(function(c){
       const val = c.recites||c.visits||0;
-      const pt = gkProject(c.lng, c.lat);
-      const t = val/maxVal;
-      const r = Math.sqrt(t)*9+2;
-      const col = gkColor(t);
-      const circle = document.createElementNS(svgNS,'circle');
-      circle.setAttribute('cx',pt[0]); circle.setAttribute('cy',pt[1]);
-      circle.setAttribute('r',r);
-      circle.setAttribute('data-base-r',r);
-      circle.setAttribute('fill',gkRgb(col));
-      circle.setAttribute('fill-opacity','0.8');
-      circle.setAttribute('stroke','#f3ede1');
-      circle.setAttribute('stroke-width','0.8');
-      circle.style.cursor='pointer';
-      (function(cc){ circle.addEventListener('click',function(e){ e.stopPropagation(); gkShowCityCardReal(cc); }); })(c);
-      const title=document.createElementNS(svgNS,'title');
-      title.textContent=c.city+' · '+val+' 遍';
-      circle.appendChild(title);
-      const label=document.createElementNS(svgNS,'text');
-      label.setAttribute('x',pt[0]); label.setAttribute('y',pt[1]-r-3);
-      label.setAttribute('text-anchor','middle');
-      label.setAttribute('font-size','16');
-      label.setAttribute('data-base-fs','16');
-      label.setAttribute('fill','#57503f');
-      label.setAttribute('class','gk-city-label');
-      label.style.display='none';
-      label.textContent=c.city;
-      cityLayer.appendChild(circle);
-      cityLayer.appendChild(label);
+      (function(cc){ makeCityDot(cc.city, cc.lng, cc.lat, val, function(){ gkShowCityCardReal(cc); }); })(c);
     });
     /* 重新应用当前缩放（保持反缩放一致） */
     try{ applyViewBox(); }catch(e){}
@@ -5352,117 +5386,207 @@ function renderGlobalMap(){
   let zoom = 1;                 /* 1=全球，越大越放大 */
   const MIN_ZOOM=1, MAX_ZOOM=20;
   let vbX=0, vbY=0, vbW=GK_W, vbH=GK_H;   /* 当前 viewBox */
+  let zoomAnimId=null;          /* 缩放动画句柄 */
+
+  /* 边界约束：把 viewBox 夹在 [0,0,GK_W,GK_H] 内 */
+  function clampViewBox(){
+    if(vbW>GK_W){ vbW=GK_W; }
+    if(vbH>GK_H){ vbH=GK_H; }
+    if(vbX<0) vbX=0;
+    if(vbY<0) vbY=0;
+    if(vbX+vbW>GK_W) vbX=GK_W-vbW;
+    if(vbY+vbH>GK_H) vbY=GK_H-vbH;
+  }
+
+  /* 更新缩放按钮禁用态（边界反馈）—— 按顺序索引定位，避免 i18n 后 aria-label 变化失效 */
+  function refreshZoomButtons(){
+    const btns = document.querySelectorAll('.gk-zoom button');
+    const inBtn = btns[0], outBtn = btns[1], resetBtn = btns[2];
+    if(inBtn) inBtn.disabled = (zoom >= MAX_ZOOM);
+    if(outBtn) outBtn.disabled = (zoom <= MIN_ZOOM);
+    if(resetBtn) resetBtn.disabled = (zoom===1 && vbX===0 && vbY===0);
+  }
 
   function applyViewBox(){
+    clampViewBox();
     svg.setAttribute('viewBox', vbX+' '+vbY+' '+vbW+' '+vbH);
     /* 缩放级别高时显示城市点 */
     if(zoom >= 3){
       cityLayer.style.display='';
-      /* 显示城市标签 */
       cityLayer.querySelectorAll('.gk-city-label').forEach(function(l){ l.style.display=''; });
     }else{
       cityLayer.style.display='none';
     }
     /* 反缩放：圆点与文字屏幕尺寸恒定（避免放大后重叠遮挡） */
-    const k = 1/zoom;   /* viewBox 缩小 zoom 倍，元素需除以 zoom 保持屏幕大小 */
-    /* 城市点圆点 */
+    const k = 1/zoom;
     cityLayer.querySelectorAll('circle').forEach(function(c){
       const base = parseFloat(c.getAttribute('data-base-r')) || 5;
       c.setAttribute('r', (base*k).toFixed(2));
     });
-    /* 城市标签文字 */
     cityLayer.querySelectorAll('.gk-city-label').forEach(function(t){
       const base = parseFloat(t.getAttribute('data-base-fs')) || 6;
       t.setAttribute('font-size', (base*k).toFixed(2));
-      /* 标签 y 位置也随圆点缩小而贴近 */
       const c = t.previousElementSibling;
       if(c && c.tagName.toLowerCase()==='circle'){
         const r = parseFloat(c.getAttribute('r')) || 0;
         t.setAttribute('y', (parseFloat(c.getAttribute('cy')) - r - 1).toFixed(1));
       }
     });
-    /* 阿育王塔点 */
     ayuLayer.querySelectorAll('circle').forEach(function(c){
       const base = parseFloat(c.getAttribute('data-base-r')) || 3.2;
       c.setAttribute('r', (base*k).toFixed(2));
     });
+    refreshZoomButtons();
   }
 
-  /* 缩放：以某点为焦点缩放 factor 倍 */
-  function zoomAt(cx, cy, factor){
-    let newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom*factor));
+  /* 平滑过渡到目标 viewBox（rAF 缓动，缩放/聚焦/重置共用） */
+  function animateViewBox(tx, ty, tw, th, tz, duration){
+    duration = duration || 260;
+    const sx=vbX, sy=vbY, sw=vbW, sh=vbH, sz=zoom;
+    const start=performance.now();
+    if(zoomAnimId) cancelAnimationFrame(zoomAnimId);
+    function step(now){
+      const t=Math.min(1,(now-start)/duration);
+      const e=1-Math.pow(1-t,3);   /* easeOutCubic */
+      vbX = sx+(tx-sx)*e;
+      vbY = sy+(ty-sy)*e;
+      vbW = sw+(tw-sw)*e;
+      vbH = sh+(th-sh)*e;
+      zoom = sz+(tz-sz)*e;
+      applyViewBox();
+      if(t<1){ zoomAnimId=requestAnimationFrame(step); }
+      else { zoomAnimId=null; }
+    }
+    zoomAnimId=requestAnimationFrame(step);
+  }
+
+  /* 缩放：以某点为焦点缩放 factor 倍（带过渡） */
+  function zoomAt(cx, cy, factor, animate){
+    const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom*factor));
     const actualFactor = newZoom/zoom;
-    if(actualFactor===1) return;
+    if(actualFactor===1){ refreshZoomButtons(); return; }
     const newW = vbW/actualFactor;
     const newH = vbH/actualFactor;
-    /* 焦点 cx,cy 是屏幕坐标(0~1)，映射到 viewBox */
     const vbx = vbX + cx*vbW;
     const vby = vbY + cy*vbH;
-    vbX = vbx - cx*newW;
-    vbY = vby - cy*newH;
-    vbW = newW; vbH = newH;
-    zoom = newZoom;
-    /* 边界约束 */
-    if(vbX<0) vbX=0;
-    if(vbY<0) vbY=0;
-    if(vbX+vbW>GK_W){ vbX=GK_W-vbW; }
-    if(vbY+vbH>GK_H){ vbY=GK_H-vbH; }
-    applyViewBox();
+    let tx = vbx - cx*newW;
+    let ty = vby - cy*newH;
+    /* 预约束目标（避免动画结束后回弹） */
+    if(tx<0) tx=0; if(ty<0) ty=0;
+    if(tx+newW>GK_W) tx=GK_W-newW;
+    if(ty+newH>GK_H) ty=GK_H-newH;
+    if(animate===false){
+      vbX=tx; vbY=ty; vbW=newW; vbH=newH; zoom=newZoom;
+      applyViewBox();
+    }else{
+      animateViewBox(tx, ty, newW, newH, newZoom, 240);
+    }
   }
 
-  function resetView(){
-    zoom=1; vbX=0; vbY=0; vbW=GK_W; vbH=GK_H;
-    applyViewBox();
+  function resetView(animate){
+    if(animate===false){
+      zoom=1; vbX=0; vbY=0; vbW=GK_W; vbH=GK_H;
+      applyViewBox();
+    }else{
+      animateViewBox(0, 0, GK_W, GK_H, 1, 300);
+    }
   }
 
-  /* 滚轮缩放 */
+  /* 滚轮缩放（带 rAF 节流，避免高频抖动） */
+  let wheelPending=false;
   svg.addEventListener('wheel', function(e){
     e.preventDefault();
-    const rect=svg.getBoundingClientRect();
-    const cx=(e.clientX-rect.left)/rect.width;
-    const cy=(e.clientY-rect.top)/rect.height;
-    const factor = e.deltaY<0 ? 1.25 : 0.8;
-    zoomAt(cx, cy, factor);
+    if(wheelPending) return;
+    wheelPending=true;
+    requestAnimationFrame(function(){
+      wheelPending=false;
+      const rect=svg.getBoundingClientRect();
+      const cx=(e.clientX-rect.left)/rect.width;
+      const cy=(e.clientY-rect.top)/rect.height;
+      const factor = e.deltaY<0 ? 1.3 : 1/1.3;
+      zoomAt(cx, cy, factor, false);   /* 滚轮直接响应，不走动画（跟手） */
+    });
   }, {passive:false});
 
-  /* 拖拽平移 */
-  let dragging=false, dragStart=null, dragVbStart=null;
+  /* 拖拽平移 + 防误触（移动距离超过阈值才算拖拽，否则视为点击） */
+  const DRAG_THRESHOLD = 5;   /* 像素 */
+  let dragging=false, dragStart=null, dragVbStart=null, dragMoved=false;
   svg.addEventListener('pointerdown', function(e){
-    dragging=true; dragStart={x:e.clientX,y:e.clientY};
+    dragging=true; dragMoved=false;
+    dragStart={x:e.clientX,y:e.clientY};
     dragVbStart={x:vbX,y:vbY};
     svg.style.cursor='grabbing';
     svg.setPointerCapture(e.pointerId);
   });
   svg.addEventListener('pointermove', function(e){
     if(!dragging) return;
+    const dx=e.clientX-dragStart.x;
+    const dy=e.clientY-dragStart.y;
+    if(!dragMoved && Math.hypot(dx,dy) < DRAG_THRESHOLD) return;
+    dragMoved=true;
     const rect=svg.getBoundingClientRect();
-    const dx=(e.clientX-dragStart.x)/rect.width*vbW;
-    const dy=(e.clientY-dragStart.y)/rect.height*vbH;
-    vbX=dragVbStart.x-dx;
-    vbY=dragVbStart.y-dy;
-    if(vbX<0)vbX=0; if(vbY<0)vbY=0;
-    if(vbX+vbW>GK_W)vbX=GK_W-vbW;
-    if(vbY+vbH>GK_H)vbY=GK_H-vbH;
+    const vdx=dx/rect.width*vbW;
+    const vdy=dy/rect.height*vbH;
+    vbX=dragVbStart.x-vdx;
+    vbY=dragVbStart.y-vdy;
     applyViewBox();
   });
-  svg.addEventListener('pointerup', function(e){
+  function endDrag(e){
     dragging=false; svg.style.cursor='grab';
-  });
-  svg.addEventListener('pointerleave', function(){ dragging=false; svg.style.cursor='grab'; });
+  }
+  svg.addEventListener('pointerup', endDrag);
+  svg.addEventListener('pointercancel', endDrag);
+  svg.addEventListener('pointerleave', endDrag);
 
   /* 双击放大 */
   svg.addEventListener('dblclick', function(e){
     const rect=svg.getBoundingClientRect();
     const cx=(e.clientX-rect.left)/rect.width;
     const cy=(e.clientY-rect.top)/rect.height;
-    zoomAt(cx, cy, 2);
+    zoomAt(cx, cy, 2, true);
   });
+
+  /* 移动端双指捏合缩放 */
+  const pointers=new Map();
+  let pinchStartDist=0, pinchStartZoom=1, pinchMid=null;
+  svg.addEventListener('pointerdown', function(e){
+    pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    if(pointers.size===2){
+      const pts=[...pointers.values()];
+      pinchStartDist=Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+      pinchStartZoom=zoom;
+      pinchMid={x:(pts[0].x+pts[1].x)/2, y:(pts[0].y+pts[1].y)/2};
+      dragging=false;   /* 双指时取消单指拖拽 */
+    }
+  });
+  svg.addEventListener('pointermove', function(e){
+    if(!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    if(pointers.size===2 && pinchStartDist>0){
+      const pts=[...pointers.values()];
+      const dist=Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+      if(dist < 1) return;
+      /* 目标缩放 = 捏合起始缩放 × (当前距离/起始距离) */
+      const targetZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinchStartZoom * dist/pinchStartDist));
+      const factor = targetZoom / zoom;
+      const rect=svg.getBoundingClientRect();
+      const cx=(pinchMid.x-rect.left)/rect.width;
+      const cy=(pinchMid.y-rect.top)/rect.height;
+      zoomAt(cx, cy, factor, false);
+    }
+  });
+  function endPointer(e){
+    pointers.delete(e.pointerId);
+    if(pointers.size<2){ pinchStartDist=0; }
+  }
+  svg.addEventListener('pointerup', endPointer);
+  svg.addEventListener('pointercancel', endPointer);
 
   /* 暴露缩放控制（供按钮调用） */
   window.__gkZoom = {
-    zoomIn: function(){ zoomAt(0.5,0.5,1.5); },
-    zoomOut: function(){ zoomAt(0.5,0.5,1/1.5); },
-    reset: resetView
+    zoomIn: function(){ zoomAt(0.5,0.5,1.6,true); },
+    zoomOut: function(){ zoomAt(0.5,0.5,1/1.6,true); },
+    reset: function(){ resetView(true); }
   };
 
   /* 暴露缩放状态与 applyViewBox，供外部 gkZoomToCountry 调用 */
@@ -5475,8 +5599,13 @@ function renderGlobalMap(){
     get vbY(){ return vbY; }, set vbY(v){ vbY = v; },
     get vbW(){ return vbW; }, set vbW(v){ vbW = v; },
     get vbH(){ return vbH; }, set vbH(v){ vbH = v; },
-    apply: applyViewBox
+    apply: applyViewBox,
+    /* 动画聚焦到指定 viewBox（供 gkZoomToCountry 平滑放大） */
+    animateTo: function(tx, ty, tw, th, tz, duration){ animateViewBox(tx, ty, tw, th, tz, duration); }
   };
+
+  /* 初始应用一次（设置按钮禁用态 + 初始 viewBox） */
+  applyViewBox();
 
   /* 尝试拉取真实数据；无后端则用演示数据 */
   if(GK_API){
@@ -5492,6 +5621,11 @@ function renderGlobalMap(){
   map.addEventListener('click', function(e){
     if(e.target===svg || e.target===bg){ gkHideCard(); }
   });
+
+  /* ESC 关闭卡片 / 悬浮提示 */
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){ gkHideCard(); hideTip(); }
+  });
 }
 
 /* 点击国家 → 放大聚焦到该国 */
@@ -5502,20 +5636,25 @@ function gkZoomToCountry(nid, name){
   let bbox;
   try{ bbox = p.getBBox(); }catch(e){ gkShowCountryCard(nid, name); return; }
   /* 放大到该国（带边距） */
-  const pad = 1.6;
-  const vw = Math.max(bbox.width*pad, 20);
-  const vh = Math.max(bbox.height*pad, 20);
-  const vx = Math.max(0, bbox.x - (vw-bbox.width)/2);
-  const vy = Math.max(0, bbox.y - (vh-bbox.height)/2);
-  const svg = document.querySelector('#gk-map svg');
-  /* 反缩放：聚焦放大后，圆点/文字仍需保持屏幕尺寸恒定 */
+  const pad = 1.7;
+  const vw = Math.max(bbox.width*pad, 24);
+  const vh = Math.max(bbox.height*pad, 24);
+  let vx = bbox.x - (vw-bbox.width)/2;
+  let vy = bbox.y - (vh-bbox.height)/2;
+  /* 边界约束 */
+  vx = Math.max(0, Math.min(vx, GK_W-vw));
+  vy = Math.max(0, Math.min(vy, GK_H-vh));
+  const tz = Math.max(1, Math.min(20, GK_W/vw));
   const gkZ = window.__gkZoomState;
-  if(gkZ){
+  if(gkZ && gkZ.animateTo){
+    /* 平滑放大聚焦（带过渡动效） */
+    gkZ.animateTo(vx, vy, vw, vh, tz, 380);
+  }else if(gkZ){
     gkZ.vbX = vx; gkZ.vbY = vy; gkZ.vbW = vw; gkZ.vbH = vh;
-    /* 根据 viewBox 宽度反推缩放级别（用于阈值与反缩放系数） */
-    gkZ.zoom = Math.max(gkZ.MIN_ZOOM, Math.min(gkZ.MAX_ZOOM, GK_W/vw));
+    gkZ.zoom = tz;
     gkZ.apply();
   }else{
+    const svg = document.querySelector('#gk-map svg');
     svg.setAttribute('viewBox', vx+' '+vy+' '+vw+' '+vh);
     const cityLayer = svg.querySelector('.gk-city-layer');
     if(cityLayer){
@@ -5632,7 +5771,8 @@ function gkShowCard(zh, en, visits, recites, extra){
   if(old) old.remove();
   const card=document.createElement('div');
   card.id='gk-card';
-  card.style.cssText='position:absolute;top:10px;right:10px;background:#fffdf6;border:1px solid rgba(43,38,32,.16);border-left:3px solid #9d3a2c;border-radius:4px;padding:14px 16px;max-width:220px;box-shadow:0 8px 24px rgba(43,38,32,.16);font-family:var(--serif-sc);z-index:10;';
+  card.className='gk-card';
+  card.style.cssText='position:absolute;top:10px;right:10px;background:#fffdf6;border:1px solid rgba(43,38,32,.16);border-left:3px solid #9d3a2c;border-radius:4px;padding:14px 16px;max-width:min(220px,calc(100% - 20px));box-shadow:0 8px 24px rgba(43,38,32,.16);font-family:var(--serif-sc);z-index:10;';
   let html='<div style="font-size:15px;font-weight:600;color:#9d3a2c;letter-spacing:.06em;">'+zh+'</div>';
   if(en && en!==zh) html+='<div style="font-size:11px;color:#8a8069;margin-top:2px;letter-spacing:.04em;">'+en+'</div>';
   if(extra){
@@ -5653,7 +5793,12 @@ function gkShowCard(zh, en, visits, recites, extra){
 
 function gkHideCard(){
   const c=document.getElementById('gk-card');
-  if(c) c.remove();
+  if(!c) return;
+  /* 淡出后移除 */
+  c.classList.add('out');
+  c.addEventListener('animationend', function(){ c.remove(); }, {once:true});
+  /* 兜底：动画未触发时直接移除 */
+  setTimeout(function(){ if(c.parentNode) c.remove(); }, 220);
 }
 /* Worker 地址：部署后替换为你的 Worker 域名，如 https://baoqieyin-global.你的子域.workers.dev */
 const GK_API = 'https://baoqieyin-global.peihanqian.workers.dev';
