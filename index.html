@@ -1062,6 +1062,10 @@ body.night .lang-toggle{background:rgba(38,32,25,.9);color:#d9cfbc;border-color:
 .gk-total .unit{font-size:14px;color:var(--muted);letter-spacing:.3em;}
 .gk-total-label{text-align:center;font-size:12px;color:var(--muted);letter-spacing:.3em;text-indent:.3em;margin-bottom:18px;}
 .gk-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 18px;}
+/* 统计卡片整体折叠：默认隐藏，点击发光数字后展开 */
+.gk-stats.collapsed{display:none;}
+.gk-stats.expanding{animation:gkStatsIn .34s cubic-bezier(.2,.8,.3,1) both;}
+@keyframes gkStatsIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
 .gk-stat{background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:13px 8px;text-align:center;}
 .gk-stat .v{font-size:20px;font-weight:600;color:var(--cinnabar-deep);line-height:1.1;font-variant-numeric:tabular-nums;}
 .gk-stat .l{font-size:11px;color:var(--muted);letter-spacing:.18em;text-indent:.18em;margin-top:6px;}
@@ -1796,7 +1800,7 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
       </div>
       <div class="gk-total" onclick="gkToggleDetail()" role="button" aria-label="查看详情"><span class="num" id="gk-total-num">—</span><span class="unit" data-i18n="global.unit">遍</span></div>
       <div class="gk-total-label" data-i18n="global.totalLabel">累 计 共 读 次 数</div>
-      <div class="gk-stats" id="gk-stats">
+      <div class="gk-stats collapsed" id="gk-stats">
         <div class="gk-stat"><div class="v" id="gk-stat-city">•••</div><div class="l" data-i18n="global.city">城 市</div></div>
         <div class="gk-stat"><div class="v" id="gk-stat-visit">•••</div><div class="l" data-i18n="global.visit">访 问 人 次</div></div>
         <div class="gk-stat"><div class="v" id="gk-stat-country">•••</div><div class="l" data-i18n="global.country">国 家 地 区</div></div>
@@ -5735,27 +5739,31 @@ function gkRenderStatsValues(){
   const v = window.__gkStatsValues;
   if(!v) return;
   const totalEl = document.getElementById('gk-total-num');
+  const statsEl = document.getElementById('gk-stats');
   const cityEl = document.getElementById('gk-stat-city');
   const visitEl = document.getElementById('gk-stat-visit');
   const countryEl = document.getElementById('gk-stat-country');
   /* 读诵总数始终显示真实数字 */
   totalEl.textContent = v.total;
   totalEl.classList.remove('hidden');
-  /* 城市/访问人次/国家地区：受「详情」开关控制 */
+  /* 城市/访问人次/国家地区：整组卡片默认隐藏，点击发光数字后展开 */
   if(gkDetailShown){
     cityEl.textContent = v.city;
     visitEl.textContent = v.visit;
     countryEl.textContent = v.country;
     [cityEl, visitEl, countryEl].forEach(function(el){
       el.classList.remove('hidden');
-      /* 弹出动画（重触发） */
       el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
     });
+    if(statsEl){
+      statsEl.classList.remove('collapsed');
+      statsEl.classList.remove('expanding'); void statsEl.offsetWidth; statsEl.classList.add('expanding');
+    }
   }else{
-    cityEl.textContent = '•••';
-    visitEl.textContent = '•••';
-    countryEl.textContent = '•••';
-    [cityEl, visitEl, countryEl].forEach(function(el){ el.classList.add('hidden'); el.classList.remove('pop'); });
+    if(statsEl){
+      statsEl.classList.add('collapsed');
+      statsEl.classList.remove('expanding');
+    }
   }
 }
 function gkToggleDetail(){
