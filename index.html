@@ -5304,6 +5304,48 @@ function renderGlobalMap(){
   });
   svg.appendChild(cityLayer);
 
+  /* 用真实城市数据重建城市点层（后端 /stats 返回 cities 后调用） */
+  window.__gkSetCities = function(cities){
+    if(!cities || !cities.length) return;
+    /* 清空现有城市点 */
+    while(cityLayer.firstChild) cityLayer.removeChild(cityLayer.firstChild);
+    let maxVal = 1;
+    cities.forEach(function(c){ const v=c.recites||c.visits||0; if(v>maxVal) maxVal=v; });
+    cities.forEach(function(c){
+      const val = c.recites||c.visits||0;
+      const pt = gkProject(c.lng, c.lat);
+      const t = val/maxVal;
+      const r = Math.sqrt(t)*9+2;
+      const col = gkColor(t);
+      const circle = document.createElementNS(svgNS,'circle');
+      circle.setAttribute('cx',pt[0]); circle.setAttribute('cy',pt[1]);
+      circle.setAttribute('r',r);
+      circle.setAttribute('data-base-r',r);
+      circle.setAttribute('fill',gkRgb(col));
+      circle.setAttribute('fill-opacity','0.8');
+      circle.setAttribute('stroke','#f3ede1');
+      circle.setAttribute('stroke-width','0.8');
+      circle.style.cursor='pointer';
+      (function(cc){ circle.addEventListener('click',function(e){ e.stopPropagation(); gkShowCityCardReal(cc); }); })(c);
+      const title=document.createElementNS(svgNS,'title');
+      title.textContent=c.city+' · '+val+' 遍';
+      circle.appendChild(title);
+      const label=document.createElementNS(svgNS,'text');
+      label.setAttribute('x',pt[0]); label.setAttribute('y',pt[1]-r-3);
+      label.setAttribute('text-anchor','middle');
+      label.setAttribute('font-size','16');
+      label.setAttribute('data-base-fs','16');
+      label.setAttribute('fill','#57503f');
+      label.setAttribute('class','gk-city-label');
+      label.style.display='none';
+      label.textContent=c.city;
+      cityLayer.appendChild(circle);
+      cityLayer.appendChild(label);
+    });
+    /* 重新应用当前缩放（保持反缩放一致） */
+    try{ applyViewBox(); }catch(e){}
+  };
+
   map.appendChild(svg);
 
   /* 缩放状态 */
@@ -5489,6 +5531,11 @@ function gkShowCityCard(c){
   gkShowCard(c[0], '', 0, c[3]);
 }
 
+/* 点击真实城市点（来自后端）弹卡片 */
+function gkShowCityCardReal(c){
+  gkShowCard(c.city, '', c.visits||0, c.recites||0);
+}
+
 /* 国家级填色热力：按读经遍数着色 */
 function gkApplyStats(data, countryPaths){
   window.__gkStats = data;   /* 缓存，供点击卡片查询 */
@@ -5515,7 +5562,10 @@ function gkApplyStats(data, countryPaths){
   document.getElementById('gk-total-num').textContent = (data.totalRecites||0).toLocaleString('zh-CN');
   document.getElementById('gk-stat-country').textContent = (data.countryCount||0);
   document.getElementById('gk-stat-visit').textContent = (data.totalVisits||0).toLocaleString('zh-CN');
-  document.getElementById('gk-stat-city').textContent = (data.countryCount||0);
+  document.getElementById('gk-stat-city').textContent = (data.cityCount||0);
+
+  /* 用真实城市数据重建城市点层 */
+  try{ if(window.__gkSetCities && data.cities) window.__gkSetCities(data.cities); }catch(e){}
 
   /* 更新说明 */
   const note=document.getElementById('gk-note');
@@ -5616,10 +5666,12 @@ try{
 
 /* ============ 全球共读 · 后端埋点（Cloudflare Worker + D1） ============ */
 let GK_reciteBuf = 0;   /* 读经计数缓冲，攒够再上报，避免高频请求 */
+let GK_vid = null;      /* 本次访问在服务端的明细 id（visit 时返回，leave/recite 回填用） */
+let GK_enterAt = Date.now();
 
-function gkTrack(type, count){
-  if(!GK_API) return;   /* 未配置 Worker 地址时静默跳过 */
-  const payload = type==='recite' ? {type:'recite', count:count} : {type:'visit'};
+/* 统一上报（sendBeacon 不支持自定义 header，但 /track 用 body 即可） */
+function gkPost(payload){
+  if(!GK_API) return;
   try{
     if(navigator.sendBeacon){
       const blob = new Blob([JSON.stringify(payload)], {type:'application/json'});
@@ -5630,17 +5682,130 @@ function gkTrack(type, count){
   }catch(e){}
 }
 
-/* 访问上报：页面加载后一次 */
-try{ gkTrack('visit'); }catch(e){}
+/* 访问上报：拿浏览器定位（可选，用户授权）→ 带城市/经纬度上报 */
+function gkTrackVisit(){
+  if(!GK_API) return;
+  const send = function(city, lat, lng){
+    const payload = {type:'visit', city:city||'', lat:lat, lng:lng};
+    /* sendBeacon 拿不到响应 vid，改用 fetch 以记录服务端明细 id */
+    fetch(GK_API+'/track', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload), keepalive:true})
+      .then(function(r){return r.json();})
+      .then(function(d){ if(d && d.vid != null) GK_vid = d.vid; })
+      .catch(function(){});
+  };
+  /* 尝试浏览器定位（需用户授权）；失败/拒绝则不带城市上报 */
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      function(pos){
+        const lat = pos.coords.latitude, lng = pos.coords.longitude;
+        /* 反查城市名：优先用反向地理编码（无第三方则留空，由经纬度落点） */
+        send('', lat, lng);
+      },
+      function(){ send('', null, null); },
+      {timeout:6000, maximumAge:3600000}
+    );
+  } else {
+    send('', null, null);
+  }
+}
 
 /* 读经上报：挂到计数流程（每 10 遍攒一次上报，防高频） */
 function gkReportRecite(){
+  if(!GK_API) return;
   GK_reciteBuf++;
   if(GK_reciteBuf >= 10){
-    gkTrack('recite', GK_reciteBuf);
+    const payload = {type:'recite', count:GK_reciteBuf};
+    if(GK_vid != null) payload.vid = GK_vid;
+    gkPost(payload);
     GK_reciteBuf = 0;
   }
 }
+
+/* 离开上报：回填停留时长（秒） */
+function gkTrackLeave(){
+  if(!GK_API || GK_vid == null) return;
+  const dur = Math.floor((Date.now() - GK_enterAt)/1000);
+  const payload = {type:'leave', vid:GK_vid, duration:dur};
+  /* 用 sendBeacon 确保页面卸载时也能发出 */
+  if(navigator.sendBeacon){
+    const blob = new Blob([JSON.stringify(payload)], {type:'application/json'});
+    try{ navigator.sendBeacon(GK_API+'/track', blob); }catch(e){}
+  } else {
+    fetch(GK_API+'/track', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload), keepalive:true}).catch(function(){});
+  }
+}
+
+/* 访问上报：页面加载后一次 */
+try{ gkTrackVisit(); }catch(e){}
+
+/* 离开时上报时长 */
+try{
+  window.addEventListener('beforeunload', gkTrackLeave);
+  window.addEventListener('pagehide', gkTrackLeave);
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState==='hidden') gkTrackLeave();
+  });
+}catch(e){}
+
+/* ============ 管理员精确视图（?admin=密码） ============ */
+function gkAdminView(){
+  const pw = new URLSearchParams(location.search).get('admin');
+  if(!pw) return;
+  if(!GK_API) return;
+  fetch(GK_API+'/admin?pw='+encodeURIComponent(pw))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data.error){ return; }
+      renderAdminPanel(data);
+    })
+    .catch(function(){});
+}
+
+function renderAdminPanel(data){
+  const agg = data.agg || {};
+  const visits = data.visits || [];
+  const online = data.online || 0;
+  let rows = '';
+  visits.forEach(function(v){
+    const t = new Date(v.at).toLocaleString('zh-CN');
+    const dur = v.duration ? (Math.floor(v.duration/60)+'分'+(v.duration%60)+'秒') : '—';
+    const loc = v.city ? (v.city+' ('+v.lat.toFixed(2)+','+v.lng.toFixed(2)+')') : (v.country||'—');
+    rows += '<tr>'
+      + '<td>'+v.ip+'</td>'
+      + '<td>'+(v.country||'—')+'</td>'
+      + '<td>'+loc+'</td>'
+      + '<td>'+dur+'</td>'
+      + '<td>'+(v.recites||0)+'</td>'
+      + '<td>'+t+'</td>'
+      + '</tr>';
+  });
+  const html =
+    '<div style="position:fixed;inset:0;z-index:2000;background:rgba(20,17,14,.92);overflow:auto;padding:24px;color:#e8e0cd;font-family:var(--serif-sc);">'
+    + '<div style="max-width:900px;margin:0 auto;">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">'
+    + '<h2 style="font-size:18px;letter-spacing:.2em;color:#d9cfbc;margin:0;">全 球 共 读 · 精 确 统 计</h2>'
+    + '<button onclick="this.closest(\'div[style]\').parentElement.remove()" style="background:none;border:1px solid rgba(255,255,255,.2);color:#d9cfbc;padding:6px 14px;border-radius:4px;cursor:pointer;font-family:var(--serif-sc);">关 闭 ✕</button>'
+    + '</div>'
+    + '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:18px;">'
+    + '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:14px 18px;flex:1;min-width:140px;"><div style="font-size:22px;color:#e8c06a;">'+(agg.totalVisits||0)+'</div><div style="font-size:11px;color:#9a8f7a;letter-spacing:.15em;">访问人次</div></div>'
+    + '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:14px 18px;flex:1;min-width:140px;"><div style="font-size:22px;color:#e8c06a;">'+(agg.totalRecites||0)+'</div><div style="font-size:11px;color:#9a8f7a;letter-spacing:.15em;">诵读遍数</div></div>'
+    + '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:14px 18px;flex:1;min-width:140px;"><div style="font-size:22px;color:#7fca9a;">'+online+'</div><div style="font-size:11px;color:#9a8f7a;letter-spacing:.15em;">当前在线</div></div>'
+    + '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:14px 18px;flex:1;min-width:140px;"><div style="font-size:22px;color:#e8c06a;">'+Math.floor((agg.totalDuration||0)/60)+'</div><div style="font-size:11px;color:#9a8f7a;letter-spacing:.15em;">累计时长(分)</div></div>'
+    + '</div>'
+    + '<div style="overflow-x:auto;">'
+    + '<table style="width:100%;border-collapse:collapse;font-size:12px;">'
+    + '<thead><tr style="color:#9a8f7a;border-bottom:1px solid rgba(255,255,255,.15);">'
+    + '<th style="text-align:left;padding:8px;">IP</th><th style="text-align:left;padding:8px;">国家</th><th style="text-align:left;padding:8px;">城市</th><th style="text-align:left;padding:8px;">时长</th><th style="text-align:left;padding:8px;">读经</th><th style="text-align:left;padding:8px;">时间</th>'
+    + '</tr></thead><tbody>' + rows + '</tbody></table>'
+    + '</div>'
+    + '<div style="margin-top:14px;font-size:11px;color:#9a8f7a;text-align:right;">最近 '+visits.length+' 条访问 · 数据实时</div>'
+    + '</div></div>';
+  const panel = document.createElement('div');
+  panel.innerHTML = html;
+  document.body.appendChild(panel.firstChild);
+}
+
+try{ gkAdminView(); }catch(e){}
 </script>
 
 <script>
