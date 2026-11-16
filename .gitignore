@@ -5,8 +5,7 @@
 _deploy/
 宝箧印网站-部署包.zip
 
-# 音频（已在阿里云 OSS，代码里 FAYIN_CDN 指向云端，本地不纳入版本库）
-assets/*.m4a
+# 音频（改为 GitHub 托管，OSS 桶已停用；音频纳入版本库以便 raw/jsDelivr 访问）
 
 # 开发/验证文件
 validate_play.js
