@@ -5733,14 +5733,16 @@ function gkRenderStatsValues(){
   const cityEl = document.getElementById('gk-stat-city');
   const visitEl = document.getElementById('gk-stat-visit');
   const countryEl = document.getElementById('gk-stat-country');
+  /* 读诵总数始终显示真实数字 */
+  totalEl.textContent = v.total;
+  totalEl.classList.remove('hidden');
+  /* 城市/访问人次/国家地区：受「详情」开关控制 */
   if(gkDetailShown){
-    totalEl.textContent = v.total;
     cityEl.textContent = v.city;
     visitEl.textContent = v.visit;
     countryEl.textContent = v.country;
-    [totalEl, cityEl, visitEl, countryEl].forEach(function(el){ el.classList.remove('hidden'); });
+    [cityEl, visitEl, countryEl].forEach(function(el){ el.classList.remove('hidden'); });
   }else{
-    totalEl.textContent = '•••';
     cityEl.textContent = '•••';
     visitEl.textContent = '•••';
     countryEl.textContent = '•••';
