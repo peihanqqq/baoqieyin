@@ -1,0 +1,12 @@
+# 宝箧印陀罗尼 · 全球共读 Worker 配置
+name = "baoqieyin-global"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# D1 数据库绑定（需先在 Cloudflare 创建 D1 数据库）
+# 创建后运行：wrangler d1 create baoqieyin-global-db
+# 然后把返回的 database_id 填到下面
+[[d1_databases]]
+binding = "DB"
+database_name = "baoqieyin-global-db"
+database_id = "e686300c-b569-461e-bb77-184a3e2ff159"
