@@ -114,6 +114,8 @@ rt{
 .home-quote.fade{opacity:0}
 .divider{display:flex;align-items:center;gap:14px;margin:26px 0;color:var(--muted);font-size:11px;letter-spacing:.4em}
 .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+/* 隐蔽内容：默认隐藏，通过 ?key=密码 解锁显示 */
+.hidden-secret{display:none !important;}
 /* 文物图版：细框圆角 + 图注 */
 .intro-fig{margin:16px 0 6px;padding:8px;background:var(--paper);border:1px solid var(--line);border-radius:3px;box-shadow:0 4px 18px rgba(43,38,32,.08)}
 .intro-fig img{display:block;width:100%;border-radius:2px}
@@ -1645,9 +1647,9 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
           <li data-i18n-html="home.japanLi5" data-page-node-id="E7V1C4iLqXEeQhrB8MGfj8"><b data-page-node-id="sXTRndmVup1AFur1wncZAA">先声</b>——早于宝篋印塔，770年称德天皇已造<b data-page-node-id="EwMUR9Kec1tEpU7GDq5EXE">百万小木塔</b>，内藏《无垢净光大陀罗尼》，分置诸大寺，为世界最早的大规模印刷事业——同为「一塔一咒」的信仰。</li>
         </ul>
 
-        <div class="divider" data-i18n="home.meritDiv" data-page-node-id="vfXk17q4GTFO6g0X1czymo">功 德 提 要</div>
-        <h3 data-i18n="home.meritH" data-page-node-id="njVbIu7QXAP59LMFD0pz0o">但闻尚获福</h3>
-        <ul data-page-node-id="i5iwxc7NeL4P2dnl9uAtoi">
+        <div class="divider hidden-secret" data-i18n="home.meritDiv" data-page-node-id="vfXk17q4GTFO6g0X1czymo">功 德 提 要</div>
+        <h3 class="hidden-secret" data-i18n="home.meritH" data-page-node-id="njVbIu7QXAP59LMFD0pz0o">但闻尚获福</h3>
+        <ul class="hidden-secret" data-page-node-id="i5iwxc7NeL4P2dnl9uAtoi">
           <li data-i18n-html="home.meritLi1" data-page-node-id="ZKYmM3lYBsrmrVM6kHCkYI"><b data-page-node-id="JiZEF8UUwfQzenCZopwcoi">谛听</b>——但闻此塔之事，尚获殊胜功德，何况信受。</li>
           <li data-i18n-html="home.meritLi2" data-page-node-id="yAhxiUx4dv38SQy9tDFcRC"><b data-page-node-id="VsAZ5QlGdqRLVqpqM2HzHs">书写读诵</b>——书写此经，即同书写九十九百千俱胝如来所说一切经典；读诵此经，即为读诵三世诸佛之法藏。</li>
           <li data-i18n-html="home.meritLi3" data-page-node-id="aKk6euZLl0wG4njJ2afu67"><b data-page-node-id="SOyCAFHGMBTDQ1y2AwHmXP">造塔装藏</b>——以土石木铜造塔，书咒置中，其塔即成七宝所成、诸佛护持之金刚藏窣堵波。</li>
@@ -1837,7 +1839,7 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
         <div class="kicker" data-i18n="dharani.kicker" data-page-node-id="pAtJuwKeO6m8tlrZ5dSdys">娜 谟 悉 怛 哩 也</div>
         <h2 data-i18n="dharani.title" data-page-node-id="W1ftWcSbayttVhLhD1grVD">宝箧印陀罗尼</h2>
       </div>
-      <div class="mudra-card" onclick="openMudra()" role="button" aria-label="观手印高清图" data-page-node-id="Geu2xmlTso8inZGUBEFYrP">
+      <div class="mudra-card hidden-secret" onclick="openMudra()" role="button" aria-label="观手印高清图" data-page-node-id="Geu2xmlTso8inZGUBEFYrP">
         <img class="pose" src="assets/mudra-pose.png" alt="宝箧印陀罗尼手印 · 结印姿势" data-page-node-id="lFjrclGY0MFjUhh17FuR2I"/>
         <div class="mudra-cap" data-page-node-id="7xJGEbQVVXn3wac1Ssn4xQ"><span data-i18n="dharani.mudraCap">宝 箧 印 陀 罗 尼 手 印</span><small data-i18n="dharani.mudraHint" data-page-node-id="uE2y9H9Dqr2H3cbBiKW6ek">先 结 此 印 · 后 诵 咒 · 轻 观 高 清 大 图 ›</small></div>
       </div>
@@ -5190,6 +5192,14 @@ try{ renderSutra(); }catch(e){}
 try{ buildMalas(); }catch(e){}
 try{ openPlay(); }catch(e){}   /* 默认把玩态 · 内联渲染富交互把玩场景 · 计数锁定 */
 try{initWuyueEmbed()}catch(e){}
+/* 隐蔽内容解锁：URL 带 ?key=<密码> 时显示手印、功德提要等隐蔽内容 */
+try{
+  const SECRET_KEY = '84000stupa';
+  const _k = new URLSearchParams(location.search).get('key');
+  if(_k === SECRET_KEY){
+    document.querySelectorAll('.hidden-secret').forEach(function(el){ el.classList.remove('hidden-secret'); });
+  }
+}catch(e){}
 </script>
 
 <script>
