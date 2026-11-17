@@ -64,8 +64,8 @@ async function handleTrack(request, env) {
   try { body = await request.json(); } catch (e) { return json({ error: 'Invalid JSON' }, 400); }
 
   const type = body.type;
-  if (!['visit', 'recite', 'leave'].includes(type)) {
-    return json({ error: 'type must be visit / recite / leave' }, 400);
+  if (!['visit', 'recite', 'leave', 'locate'].includes(type)) {
+    return json({ error: 'type must be visit / recite / leave / locate' }, 400);
   }
 
   const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
@@ -109,6 +109,28 @@ async function handleTrack(request, env) {
           `UPDATE visits SET recites = recites + ?1, at = ?2 WHERE id = ?3`
         ).bind(count, now, Number(body.vid)).run();
       }
+      return json({ ok: true, country });
+
+    } else if (type === 'locate') {
+      // 用户主动分享定位：回填城市/经纬度到已有访问明细（不重复计访问人次）
+      if (body.vid == null) {
+        // 无明细 id 时降级为新建一条带位置的访问明细
+        const city = String(body.city || '').slice(0, 60);
+        const lat = body.lat != null ? Number(body.lat) : null;
+        const lng = body.lng != null ? Number(body.lng) : null;
+        const res = await env.DB.prepare(
+          `INSERT INTO visits (ip, country, city, lat, lng, duration, recites, at)
+           VALUES (?1, ?2, ?3, ?4, ?5, 0, 0, ?6)`
+        ).bind(ip, country, city, lat, lng, now).run();
+        const vid = res.meta && res.meta.last_row_id ? res.meta.last_row_id : null;
+        return json({ ok: true, vid, country });
+      }
+      const city = String(body.city || '').slice(0, 60);
+      const lat = body.lat != null ? Number(body.lat) : null;
+      const lng = body.lng != null ? Number(body.lng) : null;
+      await env.DB.prepare(
+        `UPDATE visits SET city = ?1, lat = ?2, lng = ?3, at = ?4 WHERE id = ?5`
+      ).bind(city, lat, lng, now, Number(body.vid)).run();
       return json({ ok: true, country });
 
     } else { // leave

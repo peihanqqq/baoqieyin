@@ -1089,6 +1089,11 @@ body.night .lang-toggle{background:rgba(38,32,25,.9);color:#d9cfbc;border-color:
 .gk-ayu-legend .ayu-item{display:inline-flex;align-items:center;gap:5px;}
 .gk-ayu-legend .ayu-item i{display:inline-block;width:9px;height:9px;border-radius:50%;}
 .gk-note{text-align:center;font-size:11px;color:var(--muted);letter-spacing:.14em;margin-top:14px;line-height:1.9;}
+/* 分享位置按钮：用户主动授权定位，汇入共读 */
+.gk-share-btn{display:block;margin:14px auto 0;padding:9px 24px;border:1px solid rgba(157,58,44,.35);background:transparent;border-radius:22px;font-family:var(--serif-sc);font-size:12px;letter-spacing:.22em;text-indent:.22em;color:var(--cinnabar-deep);cursor:pointer;transition:background .2s,color .2s,border-color .2s,opacity .2s;}
+.gk-share-btn:hover{background:var(--wash);border-color:rgba(157,58,44,.55);}
+.gk-share-btn:active{background:rgba(157,58,44,.08);}
+.gk-share-btn:disabled{opacity:.5;cursor:default;}
 
 /* 缩放按钮状态反馈 */
 .gk-zoom button{transition:background .15s,color .15s,opacity .15s,border-color .15s;}
@@ -1820,6 +1825,7 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
         <span class="ayu-item"><i style="background:#6b8f71"></i><em data-i18n="global.ayuJapan">东传日本</em></span>
       </div>
       <div class="gk-note" id="gk-note" data-i18n="global.note">光谱自冷而暖 · 如灯次第相传</div>
+      <button type="button" class="gk-share-btn" id="gk-share-btn" onclick="gkShareLocation()" data-i18n="gkShare.btn">分 享 位 置 · 汇 入 共 读</button>
     </div>
   </section>
 
@@ -5297,6 +5303,7 @@ function renderGlobalMap(){
 
   /* 国家轮廓层（先画底图） */
   const countryPaths = {};
+  window.__gkCountryPaths = countryPaths;   /* 暴露供分享定位后刷新填色 */
   const countryLayer=document.createElementNS(svgNS,'g');
   WORLD_PATHS.forEach(function(entry){
     const id=entry[0], name=entry[1], d=entry[2];
@@ -5893,31 +5900,19 @@ function gkPost(payload){
   }catch(e){}
 }
 
-/* 访问上报：拿浏览器定位（可选，用户授权）→ 带城市/经纬度上报 */
+/* 访问上报：不主动索取定位，仅上报基本访问（国家由后端 CF-IPCountry 判定）。
+   用户想贡献精确城市位置时，点击世界界面的「分享位置」按钮主动授权。 */
 function gkTrackVisit(){
   if(!GK_API) return;
-  const send = function(city, lat, lng){
-    const payload = {type:'visit', city:city||'', lat:lat, lng:lng};
+  const send = function(){
+    const payload = {type:'visit'};
     /* sendBeacon 拿不到响应 vid，改用 fetch 以记录服务端明细 id */
     fetch(GK_API+'/track', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload), keepalive:true})
       .then(function(r){return r.json();})
       .then(function(d){ if(d && d.vid != null) GK_vid = d.vid; })
       .catch(function(){});
   };
-  /* 尝试浏览器定位（需用户授权）；失败/拒绝则不带城市上报 */
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(
-      function(pos){
-        const lat = pos.coords.latitude, lng = pos.coords.longitude;
-        /* 反查城市名：优先用反向地理编码（无第三方则留空，由经纬度落点） */
-        send('', lat, lng);
-      },
-      function(){ send('', null, null); },
-      {timeout:6000, maximumAge:3600000}
-    );
-  } else {
-    send('', null, null);
-  }
+  send();
 }
 
 /* 读经上报：挂到计数流程（每 10 遍攒一次上报，防高频） */
@@ -5944,6 +5939,101 @@ function gkTrackLeave(){
   } else {
     fetch(GK_API+'/track', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload), keepalive:true}).catch(function(){});
   }
+}
+
+/* ============ 分享位置（用户主动触发，不自动索取定位） ============ */
+let gkLocating = false;
+let gkShared = false;   /* 是否已成功分享过位置（用于语言切换后保持状态文案） */
+
+/* 反向地理编码：经纬度 → 城市名（Nominatim 兜底；失败用经纬度标识） */
+function gkReverseCity(lat, lng){
+  const url = 'https://nominatim.openstreetmap.org/reverse?format=json&lat='+lat+'&lon='+lng+'&zoom=10&accept-language=zh';
+  return fetch(url, {headers:{'User-Agent':'baoqieyin-app/1.0 (contact: peihanqian@gmail.com)'}})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d && d.address){
+        return d.address.city || d.address.town || d.address.county || d.address.state || d.address.country || '';
+      }
+      return '';
+    })
+    .catch(function(){ return ''; });
+}
+
+/* 用户点击「分享位置」按钮：主动授权定位 → 反查城市 → 上报 → 刷新统计 */
+function gkShareLocation(){
+  if(gkLocating) return;
+  const btn = document.getElementById('gk-share-btn');
+  const setState = function(s){
+    if(!btn) return;
+    if(s==='busy'){ btn.disabled = true; btn.textContent = gkI18n('gkShare.busy'); }
+    else if(s==='ok'){ btn.disabled = false; btn.textContent = gkI18n('gkShare.ok'); }
+    else if(s==='fail'){ btn.disabled = false; btn.textContent = gkI18n('gkShare.fail'); }
+    else { btn.disabled = false; btn.textContent = gkI18n('gkShare.btn'); }
+  };
+  if(!navigator.geolocation){
+    setState('fail');
+    return;
+  }
+  gkLocating = true;
+  setState('busy');
+  navigator.geolocation.getCurrentPosition(
+    function(pos){
+      const lat = pos.coords.latitude, lng = pos.coords.longitude;
+      gkReverseCity(lat, lng).then(function(city){
+        /* 上报位置：有 vid 则回填，否则降级为新建带位置的访问明细 */
+        const payload = {type:'locate', city: city || (lat.toFixed(3)+','+lng.toFixed(3)), lat:lat, lng:lng};
+        if(GK_vid != null) payload.vid = GK_vid;
+        fetch(GK_API+'/track', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload), keepalive:true})
+          .then(function(r){ return r.json(); })
+          .then(function(d){
+            if(d && d.vid != null && GK_vid == null) GK_vid = d.vid;
+            gkLocating = false;
+            gkShared = true;
+            setState('ok');
+            /* 刷新地图统计与城市点 */
+            gkRefreshStats();
+          })
+          .catch(function(){ gkLocating = false; setState('fail'); });
+      });
+    },
+    function(err){
+      gkLocating = false;
+      setState('fail');
+    },
+    {timeout:10000, maximumAge:3600000}
+  );
+}
+
+/* 分享定位后重新拉取 /stats 刷新城市点与统计 */
+function gkRefreshStats(){
+  if(!GK_API) return;
+  fetch(GK_API+'/stats').then(function(r){return r.json();}).then(function(data){
+    if(data && data.countries){
+      /* 复用现有填色与城市点重建逻辑 */
+      const gkZ = window.__gkStats;
+      try{
+        gkApplyStats(data, window.__gkCountryPaths || {});
+      }catch(e){}
+    }
+  }).catch(function(){});
+}
+
+/* 简短 i18n 取值（避免重复判断） */
+function gkI18n(key){
+  if(typeof I18N!=='undefined' && I18N && I18N[key]){
+    const isEn = (typeof CUR_LANG!=='undefined' && CUR_LANG==='en');
+    return I18N[key][isEn?'en':'zh'];
+  }
+  return key;
+}
+
+/* 语言切换后刷新分享按钮文案（保持已分享/定位中状态） */
+function gkRefreshShareBtn(){
+  const btn = document.getElementById('gk-share-btn');
+  if(!btn) return;
+  if(gkLocating){ btn.disabled = true; btn.textContent = gkI18n('gkShare.busy'); }
+  else if(gkShared){ btn.disabled = false; btn.textContent = gkI18n('gkShare.ok'); }
+  else { btn.disabled = false; btn.textContent = gkI18n('gkShare.btn'); }
 }
 
 /* 访问上报：页面加载后一次 */
@@ -6057,6 +6147,10 @@ const I18N = {
   'global.ayuSpread':  { zh:'故境外传播', en:'Spread beyond Wuyue' },
   'global.ayuJapan':   { zh:'东传日本', en:'Transmitted to Japan' },
   'global.note':    { zh:'光谱自冷而暖 · 如灯次第相传', en:'Spectrum from cool to warm · like lamps passed hand to hand' },
+  'gkShare.btn':  { zh:'分 享 位 置 · 汇 入 共 读', en:'SHARE LOCATION' },
+  'gkShare.busy': { zh:'定 位 中 …', en:'LOCATING…' },
+  'gkShare.ok':   { zh:'已 汇 入 · 感 谢 共 修', en:'SHARED · THANK YOU' },
+  'gkShare.fail': { zh:'未 获 授 权 · 重 试', en:'DENIED · RETRY' },
 
   /* 陀罗尼页 */
   'dharani.kicker': { zh:'娜 谟 悉 怛 哩 也', en:'Namo Śitārya' },
@@ -6308,6 +6402,7 @@ function applyLang(){
   try{ if(typeof setHint==='function') setHint(); }catch(e){}
   try{ if(typeof paintFayinVers==='function') paintFayinVers(); }catch(e){}
   try{ if(typeof gkUpdateDetailBtn==='function') gkUpdateDetailBtn(); }catch(e){}
+  try{ if(typeof gkRefreshShareBtn==='function') gkRefreshShareBtn(); }catch(e){}
 }
 
 function toggleLang(){
