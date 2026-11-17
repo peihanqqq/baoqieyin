@@ -2688,6 +2688,8 @@ function saSpeech(s){
    导航
 ================================================================ */
 function go(name){
+  /* 世界功能关闭时，阻止进入 global 视图（安全兜底） */
+  if(name==='global' && (typeof GK_ENABLED!=='undefined' && !GK_ENABLED)) return;
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===name));
@@ -5875,11 +5877,23 @@ function gkHideCard(){
 }
 /* Worker 地址：部署后替换为你的 Worker 域名，如 https://baoqieyin-global.你的子域.workers.dev */
 const GK_API = 'https://baoqieyin-global.peihanqian.workers.dev';
-try{renderGlobalMap()}catch(e){}
-/* URL 直达：?view=global 等参数自动切换视图（便于分享与测试） */
+/* 世界功能总开关：false=隐藏（暂不开放，待完善后改回 true） */
+const GK_ENABLED = false;
+
+/* 隐藏世界入口：关闭开关时移除底部导航「界·共读」按钮，阻止 view=global 直达 */
+(function gkGate(){
+  if(GK_ENABLED) return;
+  try{
+    const navBtn = document.querySelector('.nav-item[data-view="global"]');
+    if(navBtn) navBtn.style.display = 'none';
+  }catch(e){}
+})();
+
+try{ if(GK_ENABLED) renderGlobalMap(); }catch(e){}
+/* URL 直达：?view=global 等参数自动切换视图（世界功能关闭时跳过 global） */
 try{
   const _vp=new URLSearchParams(location.search).get('view');
-  if(_vp && document.getElementById('view-'+_vp)){ go(_vp); }
+  if(_vp && _vp !== 'global' && document.getElementById('view-'+_vp)){ go(_vp); }
 }catch(e){}
 
 /* ============ 全球共读 · 后端埋点（Cloudflare Worker + D1） ============ */
@@ -5903,7 +5917,7 @@ function gkPost(payload){
 /* 访问上报：不主动索取定位，仅上报基本访问（国家由后端 CF-IPCountry 判定）。
    用户想贡献精确城市位置时，点击世界界面的「分享位置」按钮主动授权。 */
 function gkTrackVisit(){
-  if(!GK_API) return;
+  if(!GK_ENABLED || !GK_API) return;
   const send = function(){
     const payload = {type:'visit'};
     /* sendBeacon 拿不到响应 vid，改用 fetch 以记录服务端明细 id */
@@ -5917,7 +5931,7 @@ function gkTrackVisit(){
 
 /* 读经上报：挂到计数流程（每 10 遍攒一次上报，防高频） */
 function gkReportRecite(){
-  if(!GK_API) return;
+  if(!GK_ENABLED || !GK_API) return;
   GK_reciteBuf++;
   if(GK_reciteBuf >= 10){
     const payload = {type:'recite', count:GK_reciteBuf};
@@ -5929,7 +5943,7 @@ function gkReportRecite(){
 
 /* 离开上报：回填停留时长（秒） */
 function gkTrackLeave(){
-  if(!GK_API || GK_vid == null) return;
+  if(!GK_ENABLED || !GK_API || GK_vid == null) return;
   const dur = Math.floor((Date.now() - GK_enterAt)/1000);
   const payload = {type:'leave', vid:GK_vid, duration:dur};
   /* 用 sendBeacon 确保页面卸载时也能发出 */
