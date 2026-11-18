@@ -215,27 +215,93 @@ body.night .title-langs .tl-name{color:#d0574a;text-shadow:0 0 14px rgba(208,87,
 .cn{font-family:var(--serif-sc);font-size:.86em;color:var(--cinnabar-deep);letter-spacing:.06em;white-space:nowrap}
 .cn::before{content:"（";color:var(--muted);opacity:.6}
 .cn::after{content:"）";color:var(--muted);opacity:.6}
-/* 未打开经卷 · 入口（经文页默认态，点击展卷） */
-.sutra-gate{padding:40px 26px 34px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.sg-scroll{display:flex;align-items:stretch;justify-content:center;max-width:420px;margin:0 auto;position:relative}
-.sg-roll-l,.sg-roll-r{flex:none;width:22px;background:linear-gradient(180deg,#6b3f22,#4a2c16 55%,#2f1d0d);border-radius:11px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 3px 10px rgba(43,38,32,.28);position:relative}
-.sg-roll-l::after,.sg-roll-r::after{content:"";position:absolute;top:8px;bottom:8px;left:50%;width:1px;background:rgba(255,255,255,.14)}
-.sg-paper{flex:1;background:linear-gradient(180deg,#efe6cf,#e7dcc0 50%,#efe6cf);border-radius:3px;box-shadow:0 2px 8px rgba(43,38,32,.16),inset 0 0 30px rgba(122,96,50,.14);padding:34px 16px 30px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
-.sg-paper::before{content:"";position:absolute;inset:6px;border:1px solid rgba(122,96,50,.22);border-radius:2px;pointer-events:none}
-.sg-tie{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:40px;height:22px;background:linear-gradient(180deg,#9d3a2c,#7c2d23);border-radius:4px;box-shadow:0 2px 5px rgba(43,38,32,.3)}
-.sg-tie::after{content:"";position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);width:8px;height:10px;background:rgba(157,58,44,.85);clip-path:polygon(0 0,100% 0,50% 100%)}
-.sg-title{font-family:var(--serif-sc);font-size:20px;font-weight:600;letter-spacing:.3em;text-indent:.3em;color:#6b3f22;line-height:1.6}
-.sg-sub{font-style:normal;font-size:11px;letter-spacing:.32em;text-indent:.32em;color:#8a6c42}
-.sg-hint{margin-top:20px;font-size:12px;letter-spacing:.3em;text-indent:.3em;color:var(--cinnabar-deep)}
+/* 未打开经卷 · 入口（经文页默认态，点击展卷）—— 仿古卷实物：浅灰紫背景 + 竖置做旧米黄经卷 */
+.sutra-gate{padding:34px 18px 30px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+/* 衬底：浅灰紫「棚拍背景纸」+ 白色细描边，仿实拍卡片 */
+.sg-scroll{
+  position:relative;max-width:440px;margin:0 auto;padding:30px 26px 26px;
+  display:flex;align-items:center;justify-content:center;gap:26px;
+  background:
+    radial-gradient(140% 120% at 50% 20%, #c9c6cb 0%, #bab7bc 55%, #b0adb3 100%);
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:4px;
+  box-shadow:0 10px 30px rgba(43,38,32,.16), inset 0 0 0 6px #ffffff;
+}
+.sg-scroll::after{content:"";position:absolute;inset:0;border-radius:4px;pointer-events:none;background:radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(80,76,86,.10) 100%)}
+/* 经卷本体：竖置圆柱，上端略鼓、下端收窄，斑驳做旧 */
+.sg-paper{
+  position:relative;display:block;width:96px;height:230px;flex:none;
+  background:
+    radial-gradient(150% 90% at 0% 50%, rgba(255,246,222,.28) 0%, transparent 55%),
+    radial-gradient(120% 60% at 20% 30%, rgba(120,88,44,.28) 0%, transparent 60%),
+    radial-gradient(130% 70% at 85% 68%, rgba(140,104,54,.32) 0%, transparent 58%),
+    radial-gradient(90% 50% at 72% 15%, rgba(90,116,120,.14) 0%, transparent 55%),
+    radial-gradient(80% 45% at 30% 88%, rgba(102,72,38,.20) 0%, transparent 55%),
+    linear-gradient(90deg,#cbb791 0%,#c2a97f 28%,#b59a6e 55%,#c9b084 78%,#bfa276 100%);
+  border-radius:50px 50px 46px 46px;
+  box-shadow:
+    inset 6px 0 14px rgba(255,246,222,.30),
+    inset -10px 0 22px rgba(84,62,34,.42),
+    inset 0 0 0 1px rgba(96,72,40,.18),
+    6px 6px 18px rgba(60,48,28,.30);
+  transform:rotate(-.4deg);
+}
+/* 卷面纹理：细划痕 + 纸张纤维 */
+.sg-paper::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:
+    repeating-linear-gradient(90deg, rgba(88,66,38,.05) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(0deg, rgba(88,66,38,.03) 0 1px, transparent 1px 11px);
+  mix-blend-mode:multiply;
+}
+/* 底部翻翘的纸边（未卷紧的纸页分层） */
+.sg-paper::after{
+  content:"";position:absolute;left:12%;right:10%;bottom:-7px;height:14px;
+  background:linear-gradient(180deg,#d7c29a,#cfb887);
+  border-radius:0 0 10px 10px;
+  box-shadow:inset 0 -3px 6px rgba(84,62,34,.30), 0 2px 4px rgba(60,48,28,.22);
+  clip-path:polygon(0 0,100% 0,96% 100%,60% 78%,22% 100%,0 70%);
+  opacity:.9;
+}
+/* 顶端朱红轴头（破损残段）—— 置于卷面之上，上端露出 */
+.sg-roll-r{
+  position:absolute;top:2px;left:50%;transform:translateX(-50%);
+  width:44px;height:24px;border-radius:11px;z-index:3;
+  background:linear-gradient(90deg,#bd5141,#963a2b 55%,#7a2d20);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.22), inset 0 -5px 9px rgba(44,16,10,.55), 0 3px 7px rgba(43,38,32,.4);
+}
+.sg-roll-r::before{content:"";position:absolute;inset:5px 4px;border-radius:8px;border:1px solid rgba(255,232,210,.20)}
+/* 底端收窄卷尾（内层浅色纸芯）—— 置于卷面之上，下端微露 */
+.sg-roll-l{
+  position:absolute;bottom:2px;left:50%;transform:translateX(-50%);
+  width:36px;height:20px;border-radius:9px;z-index:3;
+  background:linear-gradient(90deg,#e8d9b6,#d6c39a 60%,#c2ad82);
+  box-shadow:inset 0 -3px 6px rgba(84,62,34,.34), 0 2px 5px rgba(43,38,32,.28);
+}
+/* 残印（淡蓝/淡红印渍） */
+.sg-blot{position:absolute;border-radius:50%;filter:blur(.4px);opacity:.5;pointer-events:none}
+.sg-blot.b1{left:26%;top:22%;width:20px;height:24px;background:rgba(86,110,128,.20)}
+.sg-blot.b2{left:62%;top:58%;width:14px;height:18px;background:rgba(150,62,46,.16)}
+.sg-blot.b3{left:44%;top:80%;width:22px;height:10px;background:rgba(120,90,50,.16)}
+/* 标题：经卷旁竖排墨字（浓墨，手写感） */
+.sg-title{
+  writing-mode:vertical-rl;text-align:left;
+  font-family:"Kaiti SC","STKaiti","KaiTi","Noto Serif SC",serif;
+  font-size:24px;font-weight:700;line-height:1.55;letter-spacing:.1em;
+  color:#2a2118;text-shadow:0 1px 0 rgba(255,246,222,.28);
+  opacity:.92;max-height:230px;
+}
+.sg-hint{margin-top:22px;font-size:12px;letter-spacing:.3em;text-indent:.3em;color:var(--cinnabar-deep)}
 /* 展卷动画：点击后经卷入口淡出上移，经文正文淡入 */
 .sutra-gate.closing{animation:sgClose .5s cubic-bezier(.5,.1,.3,1) both}
 @keyframes sgClose{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-18px) scale(.97)}}
 #sutra-body.reveal{animation:sgBodyIn .7s ease both}
 @keyframes sgBodyIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-body.night .sg-paper{background:linear-gradient(180deg,#2b2318,#241d13 50%,#2b2318);box-shadow:0 2px 8px rgba(0,0,0,.5),inset 0 0 30px rgba(0,0,0,.3)}
-body.night .sg-paper::before{border-color:rgba(214,158,104,.2)}
-body.night .sg-title{color:#c9a86a}
-body.night .sg-sub{color:#9a825a}
+body.night .sg-scroll{background:radial-gradient(140% 120% at 50% 20%, #3a3740 0%, #312e36 55%, #2a2730 100%);box-shadow:0 10px 30px rgba(0,0,0,.5), inset 0 0 0 6px #1a1820}
+body.night .sg-scroll::after{background:radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(0,0,0,.3) 100%)}
+body.night .sg-paper{background:linear-gradient(90deg,#5a4b32 0%,#4e4028 30%,#443621 55%,#54452e 80%,#4a3b25 100%);box-shadow:inset 6px 0 14px rgba(255,240,210,.10), inset -10px 0 22px rgba(0,0,0,.5), inset 0 0 0 1px rgba(200,170,120,.14), 6px 6px 18px rgba(0,0,0,.5)}
+body.night .sg-title{color:#d8c9a6;text-shadow:0 1px 0 rgba(0,0,0,.4)}
+body.night .sg-roll-l{background:linear-gradient(90deg,#6a5a3c,#5a4b30 60%,#4a3d26)}
 .pad{margin-bottom:22px;font-size:15px;line-height:2.15;letter-spacing:.06em;text-align:justify;color:var(--ink);transition:background .4s ease}
 .pad.indent{text-indent:2em}
 .pad .note{color:var(--muted);font-size:12.5px}
@@ -902,6 +968,46 @@ body.night .pagoda-card{background:#262019}
   backdrop-filter:blur(6px);font-family:var(--serif-sc);line-height:1;
 }
 body.night .dh-close{background:rgba(28,23,17,.7)}
+
+/* ============ 参考文献页 · 资料来源 ============ */
+.ref-page{
+  display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 !important;text-align:left;
+  backdrop-filter:none;
+  background:#1c1711;
+  color:#e8dec8;
+}
+.ref-page.show{display:block}
+.ref-page-inner{
+  max-width:520px;margin:0 auto;padding:34px 26px calc(150px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,#fbf5e8,#f5ebda);
+  color:#2b2620;
+  border-left:1px solid rgba(168,133,78,.18);border-right:1px solid rgba(168,133,78,.18);
+  box-shadow:0 0 60px rgba(0,0,0,.4),0 0 8px rgba(216,178,106,.12);
+  min-height:100vh;
+}
+.ref-page .ref-kicker{font-size:10.5px;letter-spacing:.42em;color:var(--cinnabar);text-align:center}
+.ref-page .ref-title{font-size:22px;letter-spacing:.34em;text-indent:.34em;color:var(--ink);text-align:center;margin:10px 0 4px;font-weight:600}
+.ref-page .ref-sub{font-size:12px;line-height:1.9;letter-spacing:.06em;color:var(--muted);text-align:center;margin-bottom:22px}
+.ref-page .ref-sec{margin:26px 0 0}
+.ref-page .ref-sec-h{display:flex;align-items:center;gap:12px;color:var(--gold);font-size:12.5px;letter-spacing:.3em;margin-bottom:10px}
+.ref-page .ref-sec-h::before,.ref-page .ref-sec-h::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(168,133,78,.4),transparent)}
+.ref-page .ref-item{padding:12px 2px;border-bottom:1px solid var(--line);line-height:1.75}
+.ref-page .ref-item:last-child{border-bottom:none}
+.ref-page .ref-num{display:inline-block;min-width:20px;color:var(--cinnabar);font-size:12px;font-weight:600;vertical-align:top}
+.ref-page .ref-body{display:inline;font-size:13.5px;color:var(--ink-soft);letter-spacing:.03em}
+.ref-page .ref-body .ref-t{font-weight:600;color:var(--ink)}
+.ref-page .ref-body .ref-pub{color:var(--muted)}
+.ref-page .ref-body a{color:var(--cinnabar-deep);text-decoration:none;border-bottom:1px dotted rgba(126,44,33,.4);word-break:break-all}
+.ref-page .ref-body a:hover{color:var(--cinnabar)}
+.ref-page .ref-body .ref-cn{font-family:var(--serif-sc);color:var(--cinnabar-deep);font-size:.9em;letter-spacing:.04em}
+.ref-page .ref-note{margin:22px 0 0;padding:14px 16px;background:var(--wash);border-left:3px solid var(--cinnabar);border-radius:3px;font-size:12px;line-height:1.9;letter-spacing:.04em;color:var(--ink-soft);text-align:justify}
+.ref-entry-link{
+  display:block;margin:18px auto 0;padding:10px 20px;border:1px solid var(--line);border-radius:3px;
+  background:transparent;color:var(--ink-soft);font-family:var(--serif-sc);font-size:12.5px;letter-spacing:.3em;
+  cursor:pointer;transition:all .25s ease;
+}
+.ref-entry-link:hover{color:var(--cinnabar);border-color:rgba(157,58,44,.5)}
+.ref-entry-link .arrow{display:inline-block;margin-left:6px;color:var(--cinnabar)}
 
 /* 陀罗尼页 · 梵文塔形咒图（塔身即计数，金光随诵渐满） */
 .dh-stupa-count{
@@ -1696,6 +1802,9 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
 
 
         <p style="text-align:center;color:var(--muted);font-size:12.5px;margin-top:18px;letter-spacing:.15em" data-i18n="home.ending" data-page-node-id="lxClGMikAw2auBVpGhURMx">塔在经中 · 经在心中 · 心塔不灭</p>
+        <div style="text-align:center;margin-top:6px">
+          <button class="ref-entry-link" style="margin-top:6px" onclick="openRefs()" data-page-node-id="RefHomeEntry01"><span data-i18n="ref.entry">参考文献 · 资料来源</span><span class="arrow">›</span></button>
+        </div>
         <div class="credits" data-page-node-id="CreditsHome01">
           <img class="credits-seal" src="assets/seal-peihan.jpg?v=2" alt="吴越钱氏斟雉堂三十七世孙钱佩函印" data-page-node-id="CreditsSeal01"/>
         </div>
@@ -1716,12 +1825,17 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
       <button class="tab" data-slang="bi" data-page-node-id="MlqOHBCDsiQeyYLei9iYD8">中英对照</button>
     </div>
 
-    <!-- 未打开经卷 · 入口（点击展卷，展示经卷原文） -->
+    <!-- 未打开经卷 · 入口（点击展卷，展示经卷原文）—— 仿古卷实物：竖置经卷 + 旁侧经名 -->
     <div class="sutra-gate" id="sutra-gate" onclick="openSutraScroll()" role="button" aria-label="展卷 · 开启经文">
       <div class="sg-scroll">
-        <span class="sg-roll-l"></span>
-        <span class="sg-paper"><i class="sg-tie"></i><b class="sg-title">一 切 如 来 心 秘 密</b><em class="sg-sub">全 身 舍 利 宝 箧 印 陀 罗 尼 经</em></span>
-        <span class="sg-roll-r"></span>
+        <i class="sg-blot b1"></i>
+        <i class="sg-blot b2"></i>
+        <i class="sg-blot b3"></i>
+        <span class="sg-paper">
+          <span class="sg-roll-r"></span>
+          <span class="sg-roll-l"></span>
+        </span>
+        <b class="sg-title">一切如来心秘密全身舍利宝箧印陀罗尼经</b>
       </div>
       <div class="sg-hint">轻 触 展 卷 · 开 经 诵 读</div>
     </div>
@@ -1934,46 +2048,46 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
     </div>
     <figure class="intro-fig fig-center" data-page-node-id="AyuTowerFig02">
       <img src="assets/ayu-tower.png" alt="鎏金纯银阿育王塔 · 雷峰塔地宫出土" data-page-node-id="AyuTowerImg02"/>
-      <figcaption data-i18n="ayu.figCap" data-page-node-id="AyuTowerCap02">鎏金纯银阿育王塔 · 雷峰塔地宫出土（今藏浙江省博物馆）</figcaption>
+      <figcaption data-i18n-html="ayu.figCap" data-page-node-id="AyuTowerCap02">鎏金纯银阿育王塔 · 雷峰塔地宫出土（今藏浙江省博物馆）</figcaption>
     </figure>
 
     <div class="divider" data-i18n="ayu.divJapan" data-page-node-id="Fo3JIA4EWGby8YQCE53vi0">宝 箧 印 塔 东 传 日 本</div>
     <div class="ayu-prose" data-page-node-id="p35br1o1ipR1E8FZr0AI2l">
-      <p data-i18n="ayu.pJapan1" data-page-node-id="2GElM89C5sy6Nc3X4pOQ2u">九三八年，延曆寺僧日延入唐，遍曆吳越諸地，參拜天臺山，於九四八年，携寶篋印塔歸傳於日本（見成尋之參天台五臺山記），寶篋印塔，是吳越王弘俶倣阿育王故事造八萬四千寶塔，內藏寶篋印心經，頒置於各地者。筑前之大泉坊，山城之全胎寺，河內之金剛寺，三寺各有一座，此外紀州那智亦發掘而得一座小塔，今藏於東京帝室博物館，細侯爵家亦得到一座，現共存有五座。</p>
-      <p data-i18n="ayu.pJapan2" data-page-node-id="a3nFjRVLsjKSWmLEfWqtMj">今為使學者明瞭此塔傳入日本之經過，康侯二年（九六五）七月廿二日僧道喜所記寶篋印塔緣起全文，擇錄於次：</p>
+      <p data-i18n-html="ayu.pJapan1" data-page-node-id="2GElM89C5sy6Nc3X4pOQ2u">九三八年，延曆寺僧日延入唐，遍曆吳越諸地，參拜天臺山，於九四八年，携寶篋印塔歸傳於日本（見成尋之參天台五臺山記），寶篋印塔，是吳越王弘俶倣阿育王故事造八萬四千寶塔，內藏寶篋印心經，頒置於各地者。筑前之大泉坊，山城之全胎寺，河內之金剛寺，三寺各有一座，此外紀州那智亦發掘而得一座小塔，今藏於東京帝室博物館，細侯爵家亦得到一座，現共存有五座。</p>
+      <p data-i18n-html="ayu.pJapan2" data-page-node-id="a3nFjRVLsjKSWmLEfWqtMj">今為使學者明瞭此塔傳入日本之經過，康侯二年（九六五）七月廿二日僧道喜所記寶篋印塔緣起全文，擇錄於次：</p>
     </div>
 
     <div class="divider" data-i18n="ayu.divDaoqi" data-page-node-id="xUXC6VsTY0uN9CJqdycHKD">僧 道 喜 记 · 宝 箧 印 塔 缘 起</div>
     <div class="ayu-prose ayu-indent" data-page-node-id="5a1JFL7OGhKtPlRBMh6tfG">
-      <p data-i18n="ayu.pDaoqi1" data-page-node-id="8k0RygOPwVX4gHw5C3EGTR">去應和元年（九六一）春，遊右扶風，於時肥前國刺史（多治比實相）稱唐物出一基銅塔示我，高九寸餘，四面鑄鏤佛菩薩像，德宇四角，上有龕，龕形如馬耳，內亦有佛菩薩像，大如薑核，捧持瞻視之頃，自塔中一囊落，開見一經，其端紙注云：天下都元帥吳越王錢弘俶摺本寶筐印經八萬四千卷之內安寶塔之中，供養迴逈已畢，顯德三年（九五六）丙辱歲記也，文字小細，老眼難見，即雇一僧令寫大字，一視注之，文字落誤、不足耽讀，然而粗見經趣，肝動膽奮，淚零涕迸，隨喜感悅。</p>
-      <p data-i18n="ayu.pDaoqi2" data-page-node-id="ZaBR27p3jWqqxPzBePwcRO">問弘俶意，於是刺史答曰：由无願文，其意難知，但常州沙門日延，天慶年中入唐，天曆之杪歸來，即稱唐物付囑是塔之次談云：大唐顯德以往，天下大饑，黃巾（巢）結黨，抄劫邊洲，煙塵漲天，殆及封畿，弘俶為大將領天下兵，征伐兇黨及九年，比與賊合戰二十四度，斬首五萬餘級。顯德九年春，人彌飢苦，烏合蟻結，螫食華鄙，弘俶麾其師旅。應響攻撃，賊飢不戰，立以大敗。乘勝追北，至汶水邊，洪水頓漲，激浪鼓怒，津處無船，賊徒知其叵脫，各投深水，暴虎憑河之輩，追捕溺殺，其數不知幾億萬，汶水為之不流，自爾以降，天下清肅。弘俶復命之日，主上大喜，作九錫命，封王吳與越。</p>
-      <p data-i18n="ayu.pDaoqi3" data-page-node-id="W99gHsIkeUumE3uURgvEDS">弘俶不幾坐殺若干人罪，得重病送（迄）數月，常狂語云：刀劒刺胸，猶火纏身，展轉反側，舉手謝罪。爰有一僧，告云：汝願造塔，書寶篋印經，安其中供養香花，弘俶咽中發件願，兩三度合掌禮謝，即得本心，隨喜感歎云：願力無極，重病忽差，于時弘俶思阿育王昔事，鑄八萬四千塔，摺此經，每塔入之。是其一本也云，妙哉大國僧，有此優識，惜哉小藝之客，無其精勤，受我價募身命，訪求正本，哀中郊外蹠履遍問，適於江都禪寂寺得件經，其本亦多誤，然兩本相合、互檢得失，終獲其真。然後日分轉經，終日无惓，夜至誦咒，每夜不眠。漸經三箇月，于時空中有聲，告曰：汝於此經殷重渴仰，但此經有兩譯，師所持者先譯，多除梵本，其後譯者為之具足也，其本在伊豆國禪院，天下无二本，我常與二十八部大藥叉大將等守護彼經，我獨感汝精誠，常迴汝邊，亦告此事，于時小僧，就國司便誂觸可書贈彼經之狀，遂以康德二年（九六五）四月十三日送件經，披閱其卷，巧能絕妙，躭弄其文，深理染肝，十二分教為礫，是經中如意珠。八萬法藏為沙，是經其中紫磨金。一句之味如醍醐，百病萬惱，一般消滅，一字之光越日月，鐵圍沙界，俱時照明，非可忽重罪、速證佛果者，可得見是經典，聞斯妙理哉。</p>
-      <p class="ayu-sig" data-i18n="ayu.pDaoqi4" data-page-node-id="G6EuPSVQQ0jmnJPOHiGZGS">康保二年（九六五年）乙丑七月二十六日甲午釋道喜記。</p>
+      <p data-i18n-html="ayu.pDaoqi1" data-page-node-id="8k0RygOPwVX4gHw5C3EGTR">去應和元年（九六一）春，遊右扶風，於時肥前國刺史（多治比實相）稱唐物出一基銅塔示我，高九寸餘，四面鑄鏤佛菩薩像，德宇四角，上有龕，龕形如馬耳，內亦有佛菩薩像，大如薑核，捧持瞻視之頃，自塔中一囊落，開見一經，其端紙注云：天下都元帥吳越王錢弘俶摺本寶筐印經八萬四千卷之內安寶塔之中，供養迴逈已畢，顯德三年（九五六）丙辱歲記也，文字小細，老眼難見，即雇一僧令寫大字，一視注之，文字落誤、不足耽讀，然而粗見經趣，肝動膽奮，淚零涕迸，隨喜感悅。</p>
+      <p data-i18n-html="ayu.pDaoqi2" data-page-node-id="ZaBR27p3jWqqxPzBePwcRO">問弘俶意，於是刺史答曰：由无願文，其意難知，但常州沙門日延，天慶年中入唐，天曆之杪歸來，即稱唐物付囑是塔之次談云：大唐顯德以往，天下大饑，黃巾（巢）結黨，抄劫邊洲，煙塵漲天，殆及封畿，弘俶為大將領天下兵，征伐兇黨及九年，比與賊合戰二十四度，斬首五萬餘級。顯德九年春，人彌飢苦，烏合蟻結，螫食華鄙，弘俶麾其師旅。應響攻撃，賊飢不戰，立以大敗。乘勝追北，至汶水邊，洪水頓漲，激浪鼓怒，津處無船，賊徒知其叵脫，各投深水，暴虎憑河之輩，追捕溺殺，其數不知幾億萬，汶水為之不流，自爾以降，天下清肅。弘俶復命之日，主上大喜，作九錫命，封王吳與越。</p>
+      <p data-i18n-html="ayu.pDaoqi3" data-page-node-id="W99gHsIkeUumE3uURgvEDS">弘俶不幾坐殺若干人罪，得重病送（迄）數月，常狂語云：刀劒刺胸，猶火纏身，展轉反側，舉手謝罪。爰有一僧，告云：汝願造塔，書寶篋印經，安其中供養香花，弘俶咽中發件願，兩三度合掌禮謝，即得本心，隨喜感歎云：願力無極，重病忽差，于時弘俶思阿育王昔事，鑄八萬四千塔，摺此經，每塔入之。是其一本也云，妙哉大國僧，有此優識，惜哉小藝之客，無其精勤，受我價募身命，訪求正本，哀中郊外蹠履遍問，適於江都禪寂寺得件經，其本亦多誤，然兩本相合、互檢得失，終獲其真。然後日分轉經，終日无惓，夜至誦咒，每夜不眠。漸經三箇月，于時空中有聲，告曰：汝於此經殷重渴仰，但此經有兩譯，師所持者先譯，多除梵本，其後譯者為之具足也，其本在伊豆國禪院，天下无二本，我常與二十八部大藥叉大將等守護彼經，我獨感汝精誠，常迴汝邊，亦告此事，于時小僧，就國司便誂觸可書贈彼經之狀，遂以康德二年（九六五）四月十三日送件經，披閱其卷，巧能絕妙，躭弄其文，深理染肝，十二分教為礫，是經中如意珠。八萬法藏為沙，是經其中紫磨金。一句之味如醍醐，百病萬惱，一般消滅，一字之光越日月，鐵圍沙界，俱時照明，非可忽重罪、速證佛果者，可得見是經典，聞斯妙理哉。</p>
+      <p class="ayu-sig" data-i18n-html="ayu.pDaoqi4" data-page-node-id="G6EuPSVQQ0jmnJPOHiGZGS">康保二年（九六五年）乙丑七月二十六日甲午釋道喜記。</p>
     </div>
 
     <div class="divider" data-i18n="ayu.divScholar" data-page-node-id="rdD1aUhM6YATsTpNcwiMvv2">学 者 按 · 造 塔 缘 起</div>
     <div class="ayu-prose" data-page-node-id="p35br1o1ipR1E8FZr0AI2l2">
-      <p data-i18n="ayu.pScholar1" data-page-node-id="2GElM89C5sy6Nc3X4pOQ2u2">道喜所记「弘俶因杀罪得病、听僧之言造塔而愈」之说，学界存疑：藪田嘉一郎曾列五大疑点，疑其为配合时势而杜撰。据王鍾承〈吳越國王錢弘俶造阿育王塔〉考订，钱弘俶造塔最可能之动机，实为追荐亡母——其母谥恭懿吴氏薨于广顺二年（952），弘俶于隔年建报恩元教寺追荐，乙卯年（955）所铸第一批铜塔，正当亡母往生三年之期，故极可能是为母追福而造。为亡者追荐而造阿育王塔，本是吴越旧地自唐迄宋久远相传之风俗。</p>
+      <p data-i18n-html="ayu.pScholar1" data-page-node-id="2GElM89C5sy6Nc3X4pOQ2u2">道喜所记「弘俶因杀罪得病、听僧之言造塔而愈」之说，学界存疑：藪田嘉一郎曾列五大疑点，疑其为配合时势而杜撰。据王鍾承〈吳越國王錢弘俶造阿育王塔〉考订，钱弘俶造塔最可能之动机，实为追荐亡母——其母谥恭懿吴氏薨于广顺二年（952），弘俶于隔年建报恩元教寺追荐，乙卯年（955）所铸第一批铜塔，正当亡母往生三年之期，故极可能是为母追福而造。为亡者追荐而造阿育王塔，本是吴越旧地自唐迄宋久远相传之风俗。</p>
     </div>
 
     <div class="divider" data-i18n="ayu.divPoems" data-page-node-id="rdD1aUhM6YATsTpNcwiMvv">诗 咏 · 钱 忠 懿 王 金 涂 塔</div>
     <div class="ayu-poem" data-page-node-id="M1dBqcOoTNvEVnLYzpTZjz">
-      <div class="apu-title" data-i18n="ayu.poem1.title" data-page-node-id="FWGz6HO0k2oTHbRMy64bHo">咏钱忠懿王金涂塔版</div>
-      <div class="apu-author" data-i18n="ayu.poem1.author" data-page-node-id="n3DGITYr5dUq6Nxo5cyBtr">张 埙</div>
-      <div class="apu-sub" data-i18n="ayu.poem1.sub" data-page-node-id="CnIk5x4cmSWumvARYtWwsM">清 · 乾隆年间</div>
+      <div class="apu-title" data-i18n-html="ayu.poem1.title" data-page-node-id="FWGz6HO0k2oTHbRMy64bHo">咏钱忠懿王金涂塔版</div>
+      <div class="apu-author" data-i18n-html="ayu.poem1.author" data-page-node-id="n3DGITYr5dUq6Nxo5cyBtr">张 埙</div>
+      <div class="apu-sub" data-i18n-html="ayu.poem1.sub" data-page-node-id="CnIk5x4cmSWumvARYtWwsM">清 · 乾隆年间</div>
       <div class="apu-lines" data-i18n-html="ayu.poem1.lines" data-page-node-id="mh20MgHCWLBLlygx6l2Lex">
         <p data-page-node-id="FfanL6esHmxre54BCsVGCr">天目真人有子孙，</p>
         <p data-page-node-id="T4NgTWrUKcWNsSAtEMaBdJ">锦衣玉带作功臣。</p>
         <p data-page-node-id="1gfB6UBhzNXDuMn1T4U60O">踌躇八万四千塔，</p>
         <p data-page-node-id="MwoJ2s9jUI2DgvKqZBXyIt">胜十四州送与人。</p>
       </div>
-      <div class="apu-src" data-i18n="ayu.poem1.src" data-page-node-id="vrFWt1ToquQvSt3GEwsKjA">《竹叶庵文集》</div>
+      <div class="apu-src" data-i18n-html="ayu.poem1.src" data-page-node-id="vrFWt1ToquQvSt3GEwsKjA">《竹叶庵文集》</div>
     </div>
 
     <div class="divider" data-page-node-id="mGDUaGyA8IoNFSC2zZtOSR">尧 章 金 铜 佛 塔 歌</div>
     <div class="ayu-poem" data-page-node-id="S1ppYRjBwLLuQIP50Re5iU">
-      <div class="apu-title" data-i18n="ayu.poem2.title" data-page-node-id="sgy17pDVMRLLoH2az1PLZK">尧章金铜佛塔歌</div>
-      <div class="apu-author" data-i18n="ayu.poem2.author" data-page-node-id="H9yuyFtDPrSDHJo9H4WRQr">（宋）周文璞</div>
+      <div class="apu-title" data-i18n-html="ayu.poem2.title" data-page-node-id="sgy17pDVMRLLoH2az1PLZK">尧章金铜佛塔歌</div>
+      <div class="apu-author" data-i18n-html="ayu.poem2.author" data-page-node-id="H9yuyFtDPrSDHJo9H4WRQr">（宋）周文璞</div>
       <div class="apu-lines" data-i18n-html="ayu.poem2.lines" data-page-node-id="FYZoIjCIv2gPm0qi6BtvqX">
         <p data-page-node-id="VMHxSNzKC7dPQ0pAyzjOgy">白石招我入书斋，使我速礼金涂塔。</p>
         <p data-page-node-id="h8fOPguoLzhDCevIWQFxID">我疑此塔非世有，白石云是钱王禁中物。</p>
@@ -1995,9 +2109,9 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
     <div class="divider" data-page-node-id="eF0pCuT8tTlSxPFwb8HqAx">历 代 金 涂 塔 题 咏</div>
 
     <div class="ayu-poem" data-page-node-id="DjTSZ63RY57SUFeLUwRjc4">
-      <div class="apu-title" data-i18n="ayu.poem3.title" data-page-node-id="q3BpqXfkWKzbQWWK42UULD">题吴越金涂塔合拓本</div>
-      <div class="apu-author" data-i18n="ayu.poem3.author" data-page-node-id="U0HliT86XXvvcV5IwEmHPr">（清）翁方纲</div>
-      <div class="apu-sub" data-i18n="ayu.poem3.sub" data-page-node-id="MVWwdDapyyTEJurU8yEIcj">朱石君中丞得于绍兴寿量寺，阮芸台詹事拓以相寄。（乙卯）</div>
+      <div class="apu-title" data-i18n-html="ayu.poem3.title" data-page-node-id="q3BpqXfkWKzbQWWK42UULD">题吴越金涂塔合拓本</div>
+      <div class="apu-author" data-i18n-html="ayu.poem3.author" data-page-node-id="U0HliT86XXvvcV5IwEmHPr">（清）翁方纲</div>
+      <div class="apu-sub" data-i18n-html="ayu.poem3.sub" data-page-node-id="MVWwdDapyyTEJurU8yEIcj">朱石君中丞得于绍兴寿量寺，阮芸台詹事拓以相寄。（乙卯）</div>
       <div class="apu-lines" data-i18n-html="ayu.poem3.lines" data-page-node-id="PtXRTivKZpQW2kAa3efAjN">
         <p data-page-node-id="CjBtlzwGjn2XyF6A5NaPHs">我铭毗陵赵藏椟，始辨钱镠记钱俶。</p>
         <p data-page-node-id="pe5wSeQ9up3NRISAqmDgUP">已想憨山记堪续，圆顶铁轮如阿育。</p>
@@ -2019,12 +2133,12 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
         <p data-page-node-id="RCROWVEivpFJnYC0663Q79">欧史薛史搜湮沈，后来吊古古犹今。</p>
         <p data-page-node-id="OL762uCzWDlTUdAS8U7iFI">谁知采山山寺心，湖山江海和我吟，大洋风起回潮音。</p>
       </div>
-      <div class="apu-note" data-i18n="ayu.poem3.note" data-page-node-id="dy0VfApTcB1IYBxcfTTeNw">“一四四一非差参”句下作者自注引《维摩经》四天王献钵事，佛以手叠钵曰“一即四，四即一”。</div>
+      <div class="apu-note" data-i18n-html="ayu.poem3.note" data-page-node-id="dy0VfApTcB1IYBxcfTTeNw">“一四四一非差参”句下作者自注引《维摩经》四天王献钵事，佛以手叠钵曰“一即四，四即一”。</div>
     </div>
 
     <div class="ayu-poem" data-page-node-id="BuCFPb0aAA7ROmlzpap7uG">
-      <div class="apu-title" data-i18n="ayu.poem4.title" data-page-node-id="M9h4arZT0tXrWJMHKYQQQ2">钱忠懿王金涂塔歌</div>
-      <div class="apu-author" data-i18n="ayu.poem4.author" data-page-node-id="5zmcV4FQaoPGKDoMjr0JnW">（清）蒋士铨（戊戌）</div>
+      <div class="apu-title" data-i18n-html="ayu.poem4.title" data-page-node-id="M9h4arZT0tXrWJMHKYQQQ2">钱忠懿王金涂塔歌</div>
+      <div class="apu-author" data-i18n-html="ayu.poem4.author" data-page-node-id="5zmcV4FQaoPGKDoMjr0JnW">（清）蒋士铨（戊戌）</div>
       <div class="apu-lines" data-i18n-html="ayu.poem4.lines" data-page-node-id="Ed8pNpKFIe9HFv2ENlHWDY">
         <p data-page-node-id="YFFx6JJybToD3UHwkdf26g">表忠谱载金涂塔，高六寸重卅五两。</p>
         <p data-page-node-id="fH1Bi3vh9WvWlwcEZqeAYf">造自钱王乙卯年，入土无人拄牛杖。</p>
@@ -2046,12 +2160,12 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
         <p data-page-node-id="4BPLEzADgDAz0cZ3DGdsNa">嘉禾涨生示拓本，桐乡金氏收藏谨。</p>
         <p data-page-node-id="ntXkm3KUPNdDzOy31VP0HS">五百猕猴试绕看，乳滴菩提身不损。</p>
       </div>
-      <div class="apu-note" data-i18n="ayu.poem4.note" data-page-node-id="RhGbp3ZHCHD6D6dkVDjsIw">诗题下原注“戊戌”。诗中“顾家”下注“耿光”，“鄱阳姜”下注“尧章”，“秀州蒋”下注“尔龄”。</div>
+      <div class="apu-note" data-i18n-html="ayu.poem4.note" data-page-node-id="RhGbp3ZHCHD6D6dkVDjsIw">诗题下原注“戊戌”。诗中“顾家”下注“耿光”，“鄱阳姜”下注“尧章”，“秀州蒋”下注“尔龄”。</div>
     </div>
 
     <div class="ayu-poem" data-page-node-id="l2N5mY0cTjExBWzVGIJYyK">
-      <div class="apu-title" data-i18n="ayu.poem5.title" data-page-node-id="pWuR9eLPoJ9yBvKbY0nEwT">钱忠懿王金涂塔诗朱石君师命作</div>
-      <div class="apu-author" data-i18n="ayu.poem5.author" data-page-node-id="zxRw0diO9hu3CnztUaS6aT">（清）张问陶（甲寅）</div>
+      <div class="apu-title" data-i18n-html="ayu.poem5.title" data-page-node-id="pWuR9eLPoJ9yBvKbY0nEwT">钱忠懿王金涂塔诗朱石君师命作</div>
+      <div class="apu-author" data-i18n-html="ayu.poem5.author" data-page-node-id="zxRw0diO9hu3CnztUaS6aT">（清）张问陶（甲寅）</div>
       <div class="apu-lines" data-i18n-html="ayu.poem5.lines" data-page-node-id="gbwIhltGhrUbNmOfP8XbfA">
         <p data-page-node-id="FSBmRznALTc9squkmAe2Qd">钱王铸塔塔精巧，八百馀年尚完好。</p>
         <p data-page-node-id="WGHBFPH4PC6bkSMcDKon9F">吾师好古偶得之，入手峥嵘一峰小。</p>
@@ -2078,12 +2192,12 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
         <p data-page-node-id="1pSqaIY3Vmvy86b34nuWCk">人天八万四千塔，一潭一月腾辉光。</p>
         <p data-page-node-id="OmiCDwHypE9YXdgpnIhMKp">君不见神僧捧刹入云去，更为升平世界祈祯祥。</p>
       </div>
-      <div class="apu-note" data-i18n="ayu.poem5.note" data-page-node-id="mjBXpAvjEl62CE767kpVoY">诗题下原注“甲寅”，出处为《船山诗草》卷十一。</div>
+      <div class="apu-note" data-i18n-html="ayu.poem5.note" data-page-node-id="mjBXpAvjEl62CE767kpVoY">诗题下原注“甲寅”，出处为《船山诗草》卷十一。</div>
     </div>
 
     <div class="ayu-poem" data-page-node-id="gY6E1j9SZgBJ5J5FFqmwbl">
-      <div class="apu-title" data-i18n="ayu.poem6.title" data-page-node-id="oMPXRMfExhWPgGOLBwxSAk">吴越钱忠懿王金涂塔拓本覃溪前辈属题三十二韵</div>
-      <div class="apu-author" data-i18n="ayu.poem6.author" data-page-node-id="cj9ieaOGFba7ZFUjIEqhkB">（清）吴锡麒</div>
+      <div class="apu-title" data-i18n-html="ayu.poem6.title" data-page-node-id="oMPXRMfExhWPgGOLBwxSAk">吴越钱忠懿王金涂塔拓本覃溪前辈属题三十二韵</div>
+      <div class="apu-author" data-i18n-html="ayu.poem6.author" data-page-node-id="cj9ieaOGFba7ZFUjIEqhkB">（清）吴锡麒</div>
       <div class="apu-lines" data-i18n-html="ayu.poem6.lines" data-page-node-id="DuNOaqEzOvz4O6Pgmra081">
         <p data-page-node-id="FoX1DDTNsjwaxTGDirtgSl">吴越当年事，杭人易感吾。</p>
         <p data-page-node-id="ZCmUTww5yNMImA2SxYDXlp">券文迷铁绣，塔制辨金涂。</p>
@@ -2118,13 +2232,13 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
         <p data-page-node-id="7cKINnGVyyXYBic1vO7G0u">花雨飞空有，潮音入耳无。</p>
         <p data-page-node-id="fawE4FJfLGSGDoyGyJpQkP">皈心功德海，合十诵南膜。</p>
       </div>
-      <div class="apu-note" data-i18n="ayu.poem6.note" data-page-node-id="WojpNM4BRxyXjuuShdBwoX">“问年仍乙卯”句下原注：“塔为显德乙卯造，至今年乙卯，盖七千五百八十四甲子矣。”</div>
+      <div class="apu-note" data-i18n-html="ayu.poem6.note" data-page-node-id="WojpNM4BRxyXjuuShdBwoX">“问年仍乙卯”句下原注：“塔为显德乙卯造，至今年乙卯，盖七千五百八十四甲子矣。”</div>
     </div>
 
     <div class="ayu-poem" data-page-node-id="lc8FKQUb1PDUQthmIMcTt0">
-      <div class="apu-title" data-i18n="ayu.poem7.title" data-page-node-id="2e2tTkcnZAvkdvVeVL1v1a">金涂塔墨三首</div>
-      <div class="apu-author" data-i18n="ayu.poem7.author" data-page-node-id="3UBXC5w4sT49RXF5V1A7jq">（清）祁寯藻（戊午）</div>
-      <div class="apu-sub" data-i18n="ayu.poem7.sub" data-page-node-id="owVo9SlXLtJXJgrrQIzNc5">乾隆壬子浴佛日，巴慰祖子安、黄洙依宣、胡唐寿客、朱文翰见庵集黄钺左君紫阳山馆，观钱忠懿王金涂塔拓本，因缩摹四角之一，同造墨。</div>
+      <div class="apu-title" data-i18n-html="ayu.poem7.title" data-page-node-id="2e2tTkcnZAvkdvVeVL1v1a">金涂塔墨三首</div>
+      <div class="apu-author" data-i18n-html="ayu.poem7.author" data-page-node-id="3UBXC5w4sT49RXF5V1A7jq">（清）祁寯藻（戊午）</div>
+      <div class="apu-sub" data-i18n-html="ayu.poem7.sub" data-page-node-id="owVo9SlXLtJXJgrrQIzNc5">乾隆壬子浴佛日，巴慰祖子安、黄洙依宣、胡唐寿客、朱文翰见庵集黄钺左君紫阳山馆，观钱忠懿王金涂塔拓本，因缩摹四角之一，同造墨。</div>
       <div class="apu-lines" data-i18n-html="ayu.poem7.lines" data-page-node-id="zWOfSOAzEdR3bpnzWnCcgZ">
         <p class="apu-zhang" data-page-node-id="CWDvRTp9eF7J53ljpYA1Ja">其一</p>
         <p data-page-node-id="3KLDcvPwlVvRW0vTACP9ON">王孙已转庄严劫，乃祖犹将铁券遗。</p>
@@ -2134,12 +2248,12 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
         <p data-page-node-id="bO3ivCjV5aIaBRKjjqP714">化身仍作青螺髻，我欲烦君写石经。</p>
         <p class="apu-zhang" data-page-node-id="ugUCxx4f4BysdN2THg86x0">其三（原缺）</p>
       </div>
-      <div class="apu-note" data-i18n="ayu.poem7.note" data-page-node-id="DYITgiD0QVAsEqEIgI4Lq2">其一注：“吴越国王钱弘俶敬造八万四千宝塔，乙卯岁记。竹垞误以忠懿为武肃，盖未见塔及拓本耳。”其二首句注：“乾隆间陈广宁以《定武兰亭帖》易徐竹溪所得塔赠朱文正，后进入内府。陈广宁与徐山人华联句诗载《金石契》。”末句注：“潘绂庭赠此墨，适案头有蜀石经拓本。”其三原文暂缺。</div>
+      <div class="apu-note" data-i18n-html="ayu.poem7.note" data-page-node-id="DYITgiD0QVAsEqEIgI4Lq2">其一注：“吴越国王钱弘俶敬造八万四千宝塔，乙卯岁记。竹垞误以忠懿为武肃，盖未见塔及拓本耳。”其二首句注：“乾隆间陈广宁以《定武兰亭帖》易徐竹溪所得塔赠朱文正，后进入内府。陈广宁与徐山人华联句诗载《金石契》。”末句注：“潘绂庭赠此墨，适案头有蜀石经拓本。”其三原文暂缺。</div>
     </div>
 
     <div class="ayu-poem" data-page-node-id="cNAQnJLReKsrteH3OyLZf9">
-      <div class="apu-title" data-i18n="ayu.poem8.title" data-page-node-id="3peWuvbAy9umjqUkXVmNIh">题钱忠懿王金涂塔搨本後</div>
-      <div class="apu-author" data-i18n="ayu.poem8.author" data-page-node-id="tYHYuBkH2MFW8C4rejghbD">（清）阮元</div>
+      <div class="apu-title" data-i18n-html="ayu.poem8.title" data-page-node-id="3peWuvbAy9umjqUkXVmNIh">题钱忠懿王金涂塔搨本後</div>
+      <div class="apu-author" data-i18n-html="ayu.poem8.author" data-page-node-id="tYHYuBkH2MFW8C4rejghbD">（清）阮元</div>
       <div class="apu-lines" data-i18n-html="ayu.poem8.lines" data-page-node-id="wPQ4ImMgidP8up89tzeTL7">
         <p data-page-node-id="BrFyyYY2vzkGOZINQE0AeX">晉僊居士白石翁，哦誹禮塔書齋中。</p>
         <p data-page-node-id="AZs7IZZrq4WpG4oPFHpinV">當年此塔世巳罕，何期手揭金塗銅。</p>
@@ -2160,24 +2274,24 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
         <p data-page-node-id="mM6OBXzAsJBPmldZdWzelg">白蓮詩句采山詞，惜無款識空吟詩。</p>
         <p data-page-node-id="cT8tFkn2cVEUanEIfVujdF">毬攘我喜得全相，欲示小長蘆釣師。</p>
       </div>
-      <div class="apu-note" data-i18n="ayu.poem8.note" data-page-node-id="xjeGIDQM8ev5QhzyermrKM">此诗见清钱泳辑《金涂铜塔考》。“金塗冶塔合四片”至“頂出觚稜窣堵空”等句，描述塔身四片合成、顶有觚棱之形制。</div>
+      <div class="apu-note" data-i18n-html="ayu.poem8.note" data-page-node-id="xjeGIDQM8ev5QhzyermrKM">此诗见清钱泳辑《金涂铜塔考》。“金塗冶塔合四片”至“頂出觚稜窣堵空”等句，描述塔身四片合成、顶有觚棱之形制。</div>
     </div>
 
     <div class="ayu-poem" data-page-node-id="3gG6BHZyJsHCZw6kBEzpp6">
-      <div class="apu-title" data-i18n="ayu.poem9.title" data-page-node-id="I0TtjRGvNo8s3e7oUxf8pn">宝塔诗</div>
-      <div class="apu-author" data-i18n="ayu.poem9.author" data-page-node-id="SHBD4SIf3C35IvXgH25rCf">（清）徐旭旦</div>
+      <div class="apu-title" data-i18n-html="ayu.poem9.title" data-page-node-id="I0TtjRGvNo8s3e7oUxf8pn">宝塔诗</div>
+      <div class="apu-author" data-i18n-html="ayu.poem9.author" data-page-node-id="SHBD4SIf3C35IvXgH25rCf">（清）徐旭旦</div>
       <div class="apu-lines" data-i18n-html="ayu.poem9.lines" data-page-node-id="hmgV1Y0WPV3tW9D292IPuM">
         <p data-page-node-id="IA4A4Xn8hB9ZHY3wJRAPJt">宝塔珍藏不记年，黄金色相自天然。</p>
         <p data-page-node-id="OoyKp4fA0qx85j35Htt22N">燃灯古佛依青象，面壁维摩坐白莲。</p>
         <p data-page-node-id="2q8jjASO9wt1RQuUePGHsm">异质坚贞同琬琰，奇文错落费雕镌。</p>
         <p data-page-node-id="brt8JjYwSVybN82Kv5cZdz">嗣王雅制惟余一，八万四千何处传。</p>
       </div>
-      <div class="apu-note" data-i18n="ayu.poem9.note" data-page-node-id="7FmQYKlVdbaP6RheNrPp3p">此诗见《金涂铜塔考》。“嗣王雅制惟余一”句，谓钱弘俶所造八万四千塔，传世仅存其一。</div>
+      <div class="apu-note" data-i18n-html="ayu.poem9.note" data-page-node-id="7FmQYKlVdbaP6RheNrPp3p">此诗见《金涂铜塔考》。“嗣王雅制惟余一”句，谓钱弘俶所造八万四千塔，传世仅存其一。</div>
     </div>
 
     <div class="ayu-poem" data-page-node-id="3cKYVjIMVczxokj3bDnfnp">
-      <div class="apu-title" data-i18n="ayu.poem10.title" data-page-node-id="JohEvkpgnb9HYhrNs0A6Tu">金涂塔拓本歌</div>
-      <div class="apu-author" data-i18n="ayu.poem10.author" data-page-node-id="PCvT1HfUu2CVBFyD77cisu">（清）周震荣</div>
+      <div class="apu-title" data-i18n-html="ayu.poem10.title" data-page-node-id="JohEvkpgnb9HYhrNs0A6Tu">金涂塔拓本歌</div>
+      <div class="apu-author" data-i18n-html="ayu.poem10.author" data-page-node-id="PCvT1HfUu2CVBFyD77cisu">（清）周震荣</div>
       <div class="apu-lines" data-i18n-html="ayu.poem10.lines" data-page-node-id="acbIIh8BA1KgN16ezpmwil">
         <p data-page-node-id="aRANRcpMPk0hQCDhj4xXoE">凤凰山前万松岭，碧波云鹤空遗亭。</p>
         <p data-page-node-id="T5QwPFosIcDRAEfM4J8Pxg">表忠观但存二石，金涂塔况余千龄。</p>
@@ -2194,12 +2308,12 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
         <p data-page-node-id="ox87pIUFNwKoJB17biJNrL">乌井荒祠遗老拜，北邙宿草东风醒。</p>
         <p data-page-node-id="kYLNXdQ3S1zZEheVoMtmqk">君去更寻握发殿，苍苔败瓦，或有功臣型。</p>
       </div>
-      <div class="apu-note" data-i18n="ayu.poem10.note" data-page-node-id="TrR38Y4FaDU2tuE88JJwfs">此诗在《清诗别裁》等集中题作《吴越王舍利塔》。《金涂铜塔考》所载题作《金涂塔拓本歌》，今从用户所题。诗中“白石斋头”指姜夔（白石道人），“白莲迹古”指杭州白莲寺，皆与金涂塔流传故实相关。</div>
+      <div class="apu-note" data-i18n-html="ayu.poem10.note" data-page-node-id="TrR38Y4FaDU2tuE88JJwfs">此诗在《清诗别裁》等集中题作《吴越王舍利塔》。《金涂铜塔考》所载题作《金涂塔拓本歌》，今从用户所题。诗中“白石斋头”指姜夔（白石道人），“白莲迹古”指杭州白莲寺，皆与金涂塔流传故实相关。</div>
     </div>
 
     <div class="ayu-poem" data-page-node-id="1WrTHepl1cHbJRFqGG5MYG">
-      <div class="apu-title" data-i18n="ayu.poem11.title" data-page-node-id="RQdNJpAygBPpVNCFXhCGAP">题黄小松所得金涂塔福本后</div>
-      <div class="apu-author" data-i18n="ayu.poem11.author" data-page-node-id="UFOT9JaCxNvZDCFe3mgQXf">（清）程晋芳</div>
+      <div class="apu-title" data-i18n-html="ayu.poem11.title" data-page-node-id="RQdNJpAygBPpVNCFXhCGAP">题黄小松所得金涂塔福本后</div>
+      <div class="apu-author" data-i18n-html="ayu.poem11.author" data-page-node-id="UFOT9JaCxNvZDCFe3mgQXf">（清）程晋芳</div>
       <div class="apu-lines" data-i18n-html="ayu.poem11.lines" data-page-node-id="84nssEFQpUSzYEqEDFcxqd">
         <p data-page-node-id="catJIXz6hdDeVs72ZvG4sb">射潮之弩铁券书，武肃遗迹今存无。</p>
         <p data-page-node-id="7X7AoNreOm7w0xmKzpFS31">文孙建塔铸塔瓦，搨本宛觏金涂涂。</p>
@@ -2221,7 +2335,7 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
         <p data-page-node-id="kvg3di8k6CZDOBPQmj0M6Y">后先迭出果盛事，寸绿大可联碑趺。</p>
         <p data-page-node-id="aVf0EsgjO0cs4EuqerD2wK">仁人事事足千古，创制奚必追昆吾。</p>
       </div>
-      <div class="apu-note" data-i18n="ayu.poem11.note" data-page-node-id="vmLQpcgBv8UEl9GRsxOYmZ">此诗见《金涂铜塔考》，题作“前题”。用户所题“题黄小松所得金涂塔福本后”中“福本”当为“拓本”之异写。黄小松即黄易，清代金石学家。</div>
+      <div class="apu-note" data-i18n-html="ayu.poem11.note" data-page-node-id="vmLQpcgBv8UEl9GRsxOYmZ">此诗见《金涂铜塔考》，题作“前题”。用户所题“题黄小松所得金涂塔福本后”中“福本”当为“拓本”之异写。黄小松即黄易，清代金石学家。</div>
     </div>
 
     <div class="dh-back" onclick="closeAyuPoem()" data-page-node-id="rpTCFPz0nD6mNEuDigjxAd">‹ 返 回 缘 起 页</div>
@@ -2304,6 +2418,67 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
     <button class="xi-btn" onclick="xiFocusQianwang()" data-page-node-id="XihuFocus03">钱 王 祠</button>
     <button class="xi-btn" onclick="xiFit()" data-page-node-id="XihuFit01">全 景</button>
     <button class="xi-btn" onclick="closeXihuMap()" data-page-node-id="XihuClose01">合 掌 收 起</button>
+  </div>
+</div>
+
+<!-- 参考文献 · 资料来源 -->
+<div class="overlay ref-page" id="ref-overlay" data-page-node-id="RefOverlay01">
+  <button class="dh-close" onclick="closeRefs()" aria-label="收起" data-page-node-id="RefClose01">✕</button>
+  <div class="ref-page-inner" data-page-node-id="RefInner01">
+    <div class="ref-kicker" data-i18n="ref.kicker" data-page-node-id="RefKicker01">资 料 来 源</div>
+    <h2 class="ref-title" data-i18n="ref.title" data-page-node-id="RefTitle01">参 考 文 献</h2>
+    <p class="ref-sub" data-i18n="ref.sub" data-page-node-id="RefSub01">本站所涉经籍、史事、文物与地名，依下列典籍与公开资料校订 · 仅供参考</p>
+
+    <!-- 一、藏经与译本 -->
+    <div class="ref-sec" data-page-node-id="RefSec01">
+      <div class="ref-sec-h" data-i18n="ref.sec1" data-page-node-id="RefSecH01">藏 经 · 译 本</div>
+      <div class="ref-item" data-page-node-id="RefItem01"><span class="ref-num">1</span><span class="ref-body" data-i18n-html="ref.i1"></span></div>
+      <div class="ref-item" data-page-node-id="RefItem02"><span class="ref-num">2</span><span class="ref-body" data-i18n-html="ref.i2"></span></div>
+      <div class="ref-item" data-page-node-id="RefItem03"><span class="ref-num">3</span><span class="ref-body" data-i18n-html="ref.i3"></span></div>
+      <div class="ref-item" data-page-node-id="RefItem04"><span class="ref-num">4</span><span class="ref-body" data-i18n-html="ref.i4"></span></div>
+    </div>
+
+    <!-- 二、吴越国 · 宝箧印塔 -->
+    <div class="ref-sec" data-page-node-id="RefSec02">
+      <div class="ref-sec-h" data-i18n="ref.sec2" data-page-node-id="RefSecH02">吴 越 国 · 宝 箧 印 塔</div>
+      <div class="ref-item" data-page-node-id="RefItem05"><span class="ref-num">5</span><span class="ref-body" data-i18n-html="ref.i5"></span></div>
+      <div class="ref-item" data-page-node-id="RefItem06"><span class="ref-num">6</span><span class="ref-body" data-i18n-html="ref.i6"></span></div>
+      <div class="ref-item" data-page-node-id="RefItem07"><span class="ref-num">7</span><span class="ref-body" data-i18n-html="ref.i7"></span></div>
+    </div>
+
+    <!-- 三、雷峰塔 · 出土文物 -->
+    <div class="ref-sec" data-page-node-id="RefSec03">
+      <div class="ref-sec-h" data-i18n="ref.sec3" data-page-node-id="RefSecH03">雷 峰 塔 · 出 土 文 物</div>
+      <div class="ref-item" data-page-node-id="RefItem08"><span class="ref-num">8</span><span class="ref-body" data-i18n-html="ref.i8"></span></div>
+      <div class="ref-item" data-page-node-id="RefItem09"><span class="ref-num">9</span><span class="ref-body" data-i18n-html="ref.i9"></span></div>
+      <div class="ref-item" data-page-node-id="RefItem10"><span class="ref-num">10</span><span class="ref-body" data-i18n-html="ref.i10"></span></div>
+    </div>
+
+    <!-- 四、东传高丽 · 日本 -->
+    <div class="ref-sec" data-page-node-id="RefSec04">
+      <div class="ref-sec-h" data-i18n="ref.sec4" data-page-node-id="RefSecH04">东 传 高 丽 · 日 本</div>
+      <div class="ref-item" data-page-node-id="RefItem11"><span class="ref-num">11</span><span class="ref-body" data-i18n-html="ref.i11"></span></div>
+      <div class="ref-item" data-page-node-id="RefItem12"><span class="ref-num">12</span><span class="ref-body" data-i18n-html="ref.i12"></span></div>
+      <div class="ref-item" data-page-node-id="RefItem13"><span class="ref-num">13</span><span class="ref-body" data-i18n-html="ref.i13"></span></div>
+    </div>
+
+    <!-- 五、丝路 · 求法僧 · 地图 -->
+    <div class="ref-sec" data-page-node-id="RefSec05">
+      <div class="ref-sec-h" data-i18n="ref.sec5" data-page-node-id="RefSecH05">丝 路 · 求 法 僧 · 地 图</div>
+      <div class="ref-item" data-page-node-id="RefItem14"><span class="ref-num">14</span><span class="ref-body" data-i18n-html="ref.i14"></span></div>
+      <div class="ref-item" data-page-node-id="RefItem15"><span class="ref-num">15</span><span class="ref-body" data-i18n-html="ref.i15"></span></div>
+      <div class="ref-item" data-page-node-id="RefItem16"><span class="ref-num">16</span><span class="ref-body" data-i18n-html="ref.i16"></span></div>
+    </div>
+
+    <!-- 六、工具与图像 -->
+    <div class="ref-sec" data-page-node-id="RefSec06">
+      <div class="ref-sec-h" data-i18n="ref.sec6" data-page-node-id="RefSecH06">工 具 · 图 像 · 数 据</div>
+      <div class="ref-item" data-page-node-id="RefItem17"><span class="ref-num">17</span><span class="ref-body" data-i18n-html="ref.i17"></span></div>
+      <div class="ref-item" data-page-node-id="RefItem18"><span class="ref-num">18</span><span class="ref-body" data-i18n-html="ref.i18"></span></div>
+    </div>
+
+    <div class="ref-note" data-i18n-html="ref.note" data-page-node-id="RefNote01"></div>
+    <button class="ref-entry-link" onclick="closeRefs()" data-page-node-id="RefBackBtn01"><span data-i18n="ref.back">合 掌 收 起</span><span class="arrow">❧</span></button>
   </div>
 </div>
 
@@ -2933,6 +3108,20 @@ function openAyuPoem(){
 }
 function closeAyuPoem(){
   document.getElementById('ayu-poem-overlay').classList.remove('show');
+  try{ document.getElementById('player-bar').classList.remove('shrunk'); }catch(e){}
+  try{ document.querySelector('.bottom-nav').style.display=''; }catch(e){}
+}
+/* 参考文献页 · 打开/收起 */
+function openRefs(){
+  const ov=document.getElementById('ref-overlay');
+  ov.classList.add('show');
+  ov.scrollTop=0;
+  try{ document.getElementById('player-bar').classList.add('shrunk'); }catch(e){}
+  try{ document.querySelector('.bottom-nav').style.display='none'; }catch(e){}
+  softBell();
+}
+function closeRefs(){
+  document.getElementById('ref-overlay').classList.remove('show');
   try{ document.getElementById('player-bar').classList.remove('shrunk'); }catch(e){}
   try{ document.querySelector('.bottom-nav').style.display=''; }catch(e){}
 }
@@ -6352,80 +6541,118 @@ const I18N = {
 
   /* ============ 金涂塔 · 诗句与故事 ============ */
   'ayu.kicker': { zh:'八 万 四 千 塔', en:'84,000 STUPAS' },
-  'ayu.figCap': { zh:'鎏金纯银阿育王塔 · 雷峰塔地宫出土（今藏浙江省博物馆）', en:'Gilt-silver Aśoka Stupa · unearthed from the underground palace of Leifeng Pagoda (now in the Zhejiang Provincial Museum)' },
+  'ayu.figCap': { zh:'鎏金纯银阿育王塔 · 雷峰塔地宫出土（今藏浙江省博物馆）', en:'Gilt-silver Aśoka Stupa <span class="cn">阿育王塔</span> · unearthed from the underground palace of Leifeng Pagoda <span class="cn">雷峰塔</span> (now in the Zhejiang Provincial Museum <span class="cn">浙江省博物馆</span>)' },
   'ayu.divJapan': { zh:'宝 箧 印 塔 东 传 日 本', en:'The Hōkyōintō Reaches Japan' },
   'ayu.divDaoqi': { zh:'僧 道 喜 记 · 宝 箧 印 塔 缘 起', en:'The Origin of the Hōkyōintō · Recorded by Monk Dōki' },
   'ayu.divScholar': { zh:'学 者 按 · 造 塔 缘 起', en:'Scholarly Notes · the True Origin of the Stupas' },
   'ayu.divPoems': { zh:'诗 咏 · 钱 忠 懿 王 金 涂 塔', en:'Poems on the Gilt Stupa of King Qian Zhongyi' },
 
   /* 故事正文 */
-  'ayu.pJapan1': { zh:'九三八年，延曆寺僧日延入唐，遍曆吳越諸地，參拜天臺山，於九四八年，携寶篋印塔歸傳於日本（見成尋之參天台五臺山記），寶篋印塔，是吳越王弘俶倣阿育王故事造八萬四千寶塔，內藏寶篋印心經，頒置於各地者。筑前之大泉坊，山城之全胎寺，河內之金剛寺，三寺各有一座，此外紀州那智亦發掘而得一座小塔，今藏於東京帝室博物館，細侯爵家亦得到一座，現共存有五座。', en:'In 938, the monk Nichien of Enryaku-ji entered Tang China, traveled throughout the lands of Wuyue, and paid homage at Mount Tiantai. In 948 he returned to Japan carrying a hōkyōintō (see Jōjin\'s Record of a Pilgrimage to Tiantai and Wutai). The hōkyōintō is one of the 84,000 precious stupas that King Hongchu of Wuyue cast in emulation of King Aśoka, each enshrining the Baoqieyin Heart Sutra and distributed across his realm. Three temples — Daizenbō in Chikuzen, Zentaiji in Yamashiro, and Kongō-ji in Kawachi — each hold one; another small stupa was excavated at Nachi in Kii Province, now kept in the Tokyo Imperial Household Museum; and the Hosokawa marquis family obtained yet another. Five survive in all today.' },
-  'ayu.pJapan2': { zh:'今為使學者明瞭此塔傳入日本之經過，康侯二年（九六五）七月廿二日僧道喜所記寶篋印塔緣起全文，擇錄於次：', en:'To make clear to scholars how this stupa entered Japan, the full text of the Origin of the Hōkyōintō, recorded by Monk Dōki on the twenty-second day of the seventh month of Kōhō 2 (965), is excerpted below:' },
+  'ayu.pJapan1': { zh:'九三八年，延曆寺僧日延入唐，遍曆吳越諸地，參拜天臺山，於九四八年，携寶篋印塔歸傳於日本（見成尋之參天台五臺山記），寶篋印塔，是吳越王弘俶倣阿育王故事造八萬四千寶塔，內藏寶篋印心經，頒置於各地者。筑前之大泉坊，山城之全胎寺，河內之金剛寺，三寺各有一座，此外紀州那智亦發掘而得一座小塔，今藏於東京帝室博物館，細侯爵家亦得到一座，現共存有五座。', en:'In 938, the monk Nichien <span class="cn">日延</span> of Enryaku-ji <span class="cn">延曆寺</span> entered Tang China <span class="cn">唐</span>, traveled throughout the lands of Wuyue <span class="cn">吳越</span>, and paid homage at Mount Tiantai <span class="cn">天臺山</span>. In 948 he returned to Japan <span class="cn">日本</span> carrying a hōkyōintō <span class="cn">寶篋印塔</span> (see Jōjin\'s <span class="cn">成尋</span> Record of a Pilgrimage to Tiantai and Wutai <span class="cn">參天台五臺山記</span>). The hōkyōintō is one of the 84,000 precious stupas that King Hongchu <span class="cn">弘俶</span> of Wuyue cast in emulation of King Aśoka <span class="cn">阿育王</span>, each enshrining the Baoqieyin Heart Sutra and distributed across his realm. Three temples — Daizenbō in Chikuzen <span class="cn">筑前</span>, Zentaiji in Yamashiro <span class="cn">山城</span>, and Kongō-ji in Kawachi <span class="cn">河內</span> — each hold one; another small stupa was excavated at Nachi <span class="cn">那智</span> in Kii Province <span class="cn">紀州</span>, now kept in the Tokyo Imperial Household Museum <span class="cn">東京帝室博物館</span>; and the Hosokawa <span class="cn">細侯爵</span> marquis family obtained yet another. Five survive in all today.' },
+  'ayu.pJapan2': { zh:'今為使學者明瞭此塔傳入日本之經過，康侯二年（九六五）七月廿二日僧道喜所記寶篋印塔緣起全文，擇錄於次：', en:'To make clear to scholars how this stupa entered Japan <span class="cn">日本</span>, the full text of the Origin of the Hōkyōintō, recorded by Monk Dōki <span class="cn">道喜</span> on the twenty-second day of the seventh month of Kōhō 2 <span class="cn">康保二年</span> (965), is excerpted below:' },
 
-  'ayu.pDaoqi1': { zh:'去應和元年（九六一）春，遊右扶風，於時肥前國刺史（多治比實相）稱唐物出一基銅塔示我，高九寸餘，四面鑄鏤佛菩薩像，德宇四角，上有龕，龕形如馬耳，內亦有佛菩薩像，大如薑核，捧持瞻視之頃，自塔中一囊落，開見一經，其端紙注云：天下都元帥吳越王錢弘俶摺本寶筐印經八萬四千卷之內安寶塔之中，供養迴逈已畢，顯德三年（九五六）丙辱歲記也，文字小細，老眼難見，即雇一僧令寫大字，一視注之，文字落誤、不足耽讀，然而粗見經趣，肝動膽奮，淚零涕迸，隨喜感悅。', en:'In the spring of Ōwa 1 (961) I traveled to Youfufeng, where the governor of Hizen Province (Tajihi no Sanemune) showed me a bronze stupa, said to be a Chinese import. Over nine inches tall, its four faces were cast and engraved with images of Buddhas and bodhisattvas, with a niche at each corner of the eave, shaped like a horse\'s ear, within which were also Buddha and bodhisattva figures as small as ginger seeds. As I held and gazed upon it, a pouch fell from within the stupa; opening it, I found a sutra. A note at its head read: "Of the 84,000 copies of the Baoqieyin Sutra folded by Qian Hongchu, King of Wuyue, Supreme Commander of All Under Heaven, one was placed within a precious stupa; the offerings are complete. Recorded in the bingchen year of Xiande 3 (956)." The writing was minute and hard for my old eyes to make out, so I hired a monk to copy it in larger characters and read the note at a glance. The text had errors and was not fully legible, yet I glimpsed its meaning — my heart stirred, my spirit rose, tears streamed down, and I rejoiced with gladness.' },
-  'ayu.pDaoqi2': { zh:'問弘俶意，於是刺史答曰：由无願文，其意難知，但常州沙門日延，天慶年中入唐，天曆之杪歸來，即稱唐物付囑是塔之次談云：大唐顯德以往，天下大饑，黃巾（巢）結黨，抄劫邊洲，煙塵漲天，殆及封畿，弘俶為大將領天下兵，征伐兇黨及九年，比與賊合戰二十四度，斬首五萬餘級。顯德九年春，人彌飢苦，烏合蟻結，螫食華鄙，弘俶麾其師旅。應響攻撃，賊飢不戰，立以大敗。乘勝追北，至汶水邊，洪水頓漲，激浪鼓怒，津處無船，賊徒知其叵脫，各投深水，暴虎憑河之輩，追捕溺殺，其數不知幾億萬，汶水為之不流，自爾以降，天下清肅。弘俶復命之日，主上大喜，作九錫命，封王吳與越。', en:'I asked what King Hongchu intended, and the governor replied: "Without a dedicatory text, his intent is hard to know. But the monk Nichien of Changzhou, who entered Tang in the Tengyō era and returned at the end of Tenryaku, entrusted this stupa to me as a Chinese import, and spoke thus: After the Xiande era of the Great Tang, a great famine fell upon the land. The Yellow Turbans (the followers of Huang Chao) banded together and plundered the border prefectures, their dust rising to heaven and reaching near the capital. Hongchu, as commander, led the troops of all under heaven against these brigands for nine years, fought them in battle twenty-four times, and took more than fifty thousand heads. In the spring of Xiande 9 the people grew ever more famished, gathering in mobs like ants that swarmed and devoured the land, and Hongchu marshaled his armies. They attacked at his command; the starving brigands would not fight and were utterly routed. Pursuing north to the banks of the Wen River, he found the floodwaters suddenly risen, the waves raging, and no boats at the crossing. The brigands, knowing they could not escape, threw themselves into the deep water; those who trusted the river as a tiger trusts the hill were caught and drowned, countless as the tens of thousands. The Wen River ceased to flow for their corpses, and from then on all under heaven was cleansed and still. When Hongchu returned to report, the sovereign rejoiced greatly, granted him the Nine Bestowals, and enfeoffed him King of Wu and Yue."' },
-  'ayu.pDaoqi3': { zh:'弘俶不幾坐殺若干人罪，得重病送（迄）數月，常狂語云：刀劒刺胸，猶火纏身，展轉反側，舉手謝罪。爰有一僧，告云：汝願造塔，書寶篋印經，安其中供養香花，弘俶咽中發件願，兩三度合掌禮謝，即得本心，隨喜感歎云：願力無極，重病忽差，于時弘俶思阿育王昔事，鑄八萬四千塔，摺此經，每塔入之。是其一本也云，妙哉大國僧，有此優識，惜哉小藝之客，無其精勤，受我價募身命，訪求正本，哀中郊外蹠履遍問，適於江都禪寂寺得件經，其本亦多誤，然兩本相合、互檢得失，終獲其真。然後日分轉經，終日无惓，夜至誦咒，每夜不眠。漸經三箇月，于時空中有聲，告曰：汝於此經殷重渴仰，但此經有兩譯，師所持者先譯，多除梵本，其後譯者為之具足也，其本在伊豆國禪院，天下无二本，我常與二十八部大藥叉大將等守護彼經，我獨感汝精誠，常迴汝邊，亦告此事，于時小僧，就國司便誂觸可書贈彼經之狀，遂以康德二年（九六五）四月十三日送件經，披閱其卷，巧能絕妙，躭弄其文，深理染肝，十二分教為礫，是經中如意珠。八萬法藏為沙，是經其中紫磨金。一句之味如醍醐，百病萬惱，一般消滅，一字之光越日月，鐵圍沙界，俱時照明，非可忽重罪、速證佛果者，可得見是經典，聞斯妙理哉。', en:'Not long after, Hongchu fell gravely ill for his sin of killing so many, and for months he raved in delirium: swords pierced his chest, fire wrapped his body; he tossed and turned, raising his hands in confession. Then a monk came and told him: "Vow to build stupas, write out the Baoqieyin Sutra, place it within, and make offerings of incense and flowers." Hongchu made this vow aloud, pressed his palms together two or three times in thanks, and at once regained his right mind. Rejoicing, he sighed: "The power of a vow is boundless, and my grave illness is suddenly cured." Then Hongchu recalled the ancient deeds of King Aśoka, cast 84,000 stupas, folded this sutra, and placed one within each. "This is one of them," it was said. "How admirable the monk of the great land, with such fine insight! How lamentable the petty craftsman, lacking such diligence! Take my payment and stake your life to seek out the true text." I searched everywhere, even in the outskirts and fields, and at last found this sutra at Zenjaku-ji in Edo. That copy, too, had many errors, but by combining the two copies and checking one against the other, I obtained the true text. Thereafter I recited the sutra by day without weariness, and chanted the dhāraṇī by night without sleep. After some three months, a voice spoke in the air, saying: "You yearn earnestly for this sutra, but it has two translations. The one you hold is the earlier, which omits much of the Sanskrit original; the later translation is complete. The complete text lies in a Zen cloister in Izu Province — there is no second copy under heaven. I, together with the twenty-eight great yakṣa generals, guard that sutra. Moved by your sincerity alone, I have been circling you, and so I tell you this." Then I, a humble monk, petitioned the provincial office to have the sutra copied and sent to me, and on the thirteenth day of the fourth month of Kōtoku 2 (965) it was delivered. Opening its scrolls, I found the workmanship exquisite and savored its words; its profound meaning dyed my very liver. The twelve divisions of the teaching are as pebbles beside this sutra, the wish-fulfilling gem; the 84,000 dharma-treasures are as sand beside this sutra, the refined gold. One phrase of it tastes like ghee and dispels a hundred illnesses and ten thousand afflictions; one character of it shines beyond sun and moon and illumines the iron-encircled worlds of sand. Can one of grave sins who yet attains Buddhahood swiftly be permitted to see this scripture and hear this wondrous truth?' },
-  'ayu.pDaoqi4': { zh:'康保二年（九六五年）乙丑七月二十六日甲午釋道喜記。', en:'Recorded by the monk Dōki on the twenty-sixth day of the seventh month, a kinoe-uma day, in Kōhō 2 (965).' },
+  'ayu.pDaoqi1': { zh:'去應和元年（九六一）春，遊右扶風，於時肥前國刺史（多治比實相）稱唐物出一基銅塔示我，高九寸餘，四面鑄鏤佛菩薩像，德宇四角，上有龕，龕形如馬耳，內亦有佛菩薩像，大如薑核，捧持瞻視之頃，自塔中一囊落，開見一經，其端紙注云：天下都元帥吳越王錢弘俶摺本寶筐印經八萬四千卷之內安寶塔之中，供養迴逈已畢，顯德三年（九五六）丙辱歲記也，文字小細，老眼難見，即雇一僧令寫大字，一視注之，文字落誤、不足耽讀，然而粗見經趣，肝動膽奮，淚零涕迸，隨喜感悅。', en:'In the spring of Ōwa 1 <span class="cn">應和元年</span> (961) I traveled to Youfufeng <span class="cn">右扶風</span>, where the governor of Hizen Province <span class="cn">肥前國</span> (Tajihi no Sanemune <span class="cn">多治比實相</span>) showed me a bronze stupa, said to be a Chinese import. Over nine inches tall, its four faces were cast and engraved with images of Buddhas and bodhisattvas, with a niche at each corner of the eave, shaped like a horse\'s ear, within which were also Buddha and bodhisattva figures as small as ginger seeds. As I held and gazed upon it, a pouch fell from within the stupa; opening it, I found a sutra. A note at its head read: "Of the 84,000 copies of the Baoqieyin Sutra <span class="cn">寶篋印經</span> folded by Qian Hongchu <span class="cn">錢弘俶</span>, King of Wuyue <span class="cn">吳越王</span>, Supreme Commander of All Under Heaven <span class="cn">天下都元帥</span>, one was placed within a precious stupa; the offerings are complete. Recorded in the bingchen year <span class="cn">丙辰歲</span> of Xiande 3 <span class="cn">顯德三年</span> (956)." The writing was minute and hard for my old eyes to make out, so I hired a monk to copy it in larger characters and read the note at a glance. The text had errors and was not fully legible, yet I glimpsed its meaning — my heart stirred, my spirit rose, tears streamed down, and I rejoiced with gladness.' },
+  'ayu.pDaoqi2': { zh:'問弘俶意，於是刺史答曰：由无願文，其意難知，但常州沙門日延，天慶年中入唐，天曆之杪歸來，即稱唐物付囑是塔之次談云：大唐顯德以往，天下大饑，黃巾（巢）結黨，抄劫邊洲，煙塵漲天，殆及封畿，弘俶為大將領天下兵，征伐兇黨及九年，比與賊合戰二十四度，斬首五萬餘級。顯德九年春，人彌飢苦，烏合蟻結，螫食華鄙，弘俶麾其師旅。應響攻撃，賊飢不戰，立以大敗。乘勝追北，至汶水邊，洪水頓漲，激浪鼓怒，津處無船，賊徒知其叵脫，各投深水，暴虎憑河之輩，追捕溺殺，其數不知幾億萬，汶水為之不流，自爾以降，天下清肅。弘俶復命之日，主上大喜，作九錫命，封王吳與越。', en:'I asked what King Hongchu <span class="cn">弘俶</span> intended, and the governor replied: "Without a dedicatory text, his intent is hard to know. But the monk Nichien <span class="cn">日延</span> of Changzhou <span class="cn">常州</span>, who entered Tang <span class="cn">唐</span> in the Tengyō era <span class="cn">天慶</span> and returned at the end of Tenryaku <span class="cn">天曆</span>, entrusted this stupa to me as a Chinese import, and spoke thus: After the Xiande era <span class="cn">顯德</span> of the Great Tang, a great famine fell upon the land. The Yellow Turbans <span class="cn">黃巾</span> (the followers of Huang Chao <span class="cn">黃巢</span>) banded together and plundered the border prefectures, their dust rising to heaven and reaching near the capital. Hongchu, as commander, led the troops of all under heaven against these brigands for nine years, fought them in battle twenty-four times, and took more than fifty thousand heads. In the spring of Xiande 9 <span class="cn">顯德九年</span> the people grew ever more famished, gathering in mobs like ants that swarmed and devoured the land, and Hongchu marshaled his armies. They attacked at his command; the starving brigands would not fight and were utterly routed. Pursuing north to the banks of the Wen River <span class="cn">汶水</span>, he found the floodwaters suddenly risen, the waves raging, and no boats at the crossing. The brigands, knowing they could not escape, threw themselves into the deep water; those who trusted the river as a tiger trusts the hill were caught and drowned, countless as the tens of thousands. The Wen River ceased to flow for their corpses, and from then on all under heaven was cleansed and still. When Hongchu returned to report, the sovereign rejoiced greatly, granted him the Nine Bestowals <span class="cn">九錫</span>, and enfeoffed him King of Wu and Yue <span class="cn">吳越王</span>."' },
+  'ayu.pDaoqi3': { zh:'弘俶不幾坐殺若干人罪，得重病送（迄）數月，常狂語云：刀劒刺胸，猶火纏身，展轉反側，舉手謝罪。爰有一僧，告云：汝願造塔，書寶篋印經，安其中供養香花，弘俶咽中發件願，兩三度合掌禮謝，即得本心，隨喜感歎云：願力無極，重病忽差，于時弘俶思阿育王昔事，鑄八萬四千塔，摺此經，每塔入之。是其一本也云，妙哉大國僧，有此優識，惜哉小藝之客，無其精勤，受我價募身命，訪求正本，哀中郊外蹠履遍問，適於江都禪寂寺得件經，其本亦多誤，然兩本相合、互檢得失，終獲其真。然後日分轉經，終日无惓，夜至誦咒，每夜不眠。漸經三箇月，于時空中有聲，告曰：汝於此經殷重渴仰，但此經有兩譯，師所持者先譯，多除梵本，其後譯者為之具足也，其本在伊豆國禪院，天下无二本，我常與二十八部大藥叉大將等守護彼經，我獨感汝精誠，常迴汝邊，亦告此事，于時小僧，就國司便誂觸可書贈彼經之狀，遂以康德二年（九六五）四月十三日送件經，披閱其卷，巧能絕妙，躭弄其文，深理染肝，十二分教為礫，是經中如意珠。八萬法藏為沙，是經其中紫磨金。一句之味如醍醐，百病萬惱，一般消滅，一字之光越日月，鐵圍沙界，俱時照明，非可忽重罪、速證佛果者，可得見是經典，聞斯妙理哉。', en:'Not long after, Hongchu <span class="cn">弘俶</span> fell gravely ill for his sin of killing so many, and for months he raved in delirium: swords pierced his chest, fire wrapped his body; he tossed and turned, raising his hands in confession. Then a monk came and told him: "Vow to build stupas, write out the Baoqieyin Sutra <span class="cn">寶篋印經</span>, place it within, and make offerings of incense and flowers." Hongchu made this vow aloud, pressed his palms together two or three times in thanks, and at once regained his right mind. Rejoicing, he sighed: "The power of a vow is boundless, and my grave illness is suddenly cured." Then Hongchu recalled the ancient deeds of King Aśoka <span class="cn">阿育王</span>, cast 84,000 stupas, folded this sutra, and placed one within each. "This is one of them," it was said. "How admirable the monk of the great land, with such fine insight! How lamentable the petty craftsman, lacking such diligence! Take my payment and stake your life to seek out the true text." I searched everywhere, even in the outskirts and fields, and at last found this sutra at Zenjaku-ji <span class="cn">禪寂寺</span> in Edo <span class="cn">江都</span>. That copy, too, had many errors, but by combining the two copies and checking one against the other, I obtained the true text. Thereafter I recited the sutra by day without weariness, and chanted the dhāraṇī by night without sleep. After some three months, a voice spoke in the air, saying: "You yearn earnestly for this sutra, but it has two translations. The one you hold is the earlier, which omits much of the Sanskrit original; the later translation is complete. The complete text lies in a Zen cloister in Izu Province <span class="cn">伊豆國</span> — there is no second copy under heaven. I, together with the twenty-eight great yakṣa generals <span class="cn">二十八部大藥叉大將</span>, guard that sutra. Moved by your sincerity alone, I have been circling you, and so I tell you this." Then I, a humble monk, petitioned the provincial office to have the sutra copied and sent to me, and on the thirteenth day of the fourth month of Kōtoku 2 <span class="cn">康德二年</span> (965) it was delivered. Opening its scrolls, I found the workmanship exquisite and savored its words; its profound meaning dyed my very liver. The twelve divisions of the teaching are as pebbles beside this sutra, the wish-fulfilling gem; the 84,000 dharma-treasures are as sand beside this sutra, the refined gold. One phrase of it tastes like ghee and dispels a hundred illnesses and ten thousand afflictions; one character of it shines beyond sun and moon and illumines the iron-encircled worlds of sand. Can one of grave sins who yet attains Buddhahood swiftly be permitted to see this scripture and hear this wondrous truth?' },
+  'ayu.pDaoqi4': { zh:'康保二年（九六五年）乙丑七月二十六日甲午釋道喜記。', en:'Recorded by the monk Dōki <span class="cn">道喜</span> on the twenty-sixth day of the seventh month, a kinoe-uma day, in Kōhō 2 <span class="cn">康保二年</span> (965).' },
 
-  'ayu.pScholar1': { zh:'道喜所记「弘俶因杀罪得病、听僧之言造塔而愈」之说，学界存疑：藪田嘉一郎曾列五大疑点，疑其为配合时势而杜撰。据王鍾承〈吳越國王錢弘俶造阿育王塔〉考订，钱弘俶造塔最可能之动机，实为追荐亡母——其母谥恭懿吴氏薨于广顺二年（952），弘俶于隔年建报恩元教寺追荐，乙卯年（955）所铸第一批铜塔，正当亡母往生三年之期，故极可能是为母追福而造。为亡者追荐而造阿育王塔，本是吴越旧地自唐迄宋久远相传之风俗。', en:'Dōki\'s account — that Hongchu fell ill from the sin of killing and was cured by building stupas at a monk\'s advice — is doubted by scholars. Yabuta Kaichirō listed five points of suspicion, suspecting the story was fabricated to suit the times. According to Wang Zhongcheng\'s study "King Qian Hongchu of Wuyue Casts Aśoka Stupas," the most likely motive was to honor his late mother: Lady Wu, posthumously titled Gongyi, died in Guangshun 2 (952), and Hongchu built Bao\'en Yuanjiao Temple the following year in her memory. The first batch of bronze stupas, cast in the yimao year (955), fell exactly on the third anniversary of her passing — so they were very likely made to transfer merit to her. Casting Aśoka stupas to honor the departed was a long-standing custom of the old Wuyue lands, passed down from Tang through Song.' },
+  'ayu.pScholar1': { zh:'道喜所记「弘俶因杀罪得病、听僧之言造塔而愈」之说，学界存疑：藪田嘉一郎曾列五大疑点，疑其为配合时势而杜撰。据王鍾承〈吳越國王錢弘俶造阿育王塔〉考订，钱弘俶造塔最可能之动机，实为追荐亡母——其母谥恭懿吴氏薨于广顺二年（952），弘俶于隔年建报恩元教寺追荐，乙卯年（955）所铸第一批铜塔，正当亡母往生三年之期，故极可能是为母追福而造。为亡者追荐而造阿育王塔，本是吴越旧地自唐迄宋久远相传之风俗。', en:'Dōki\'s <span class="cn">道喜</span> account — that Hongchu <span class="cn">弘俶</span> fell ill from the sin of killing and was cured by building stupas at a monk\'s advice — is doubted by scholars. Yabuta Kaichirō <span class="cn">藪田嘉一郎</span> listed five points of suspicion, suspecting the story was fabricated to suit the times. According to Wang Zhongcheng\'s <span class="cn">王鍾承</span> study "King Qian Hongchu of Wuyue Casts Aśoka Stupas <span class="cn">吳越國王錢弘俶造阿育王塔</span>," the most likely motive was to honor his late mother: Lady Wu <span class="cn">吳氏</span>, posthumously titled Gongyi <span class="cn">恭懿</span>, died in Guangshun 2 <span class="cn">廣順二年</span> (952), and Hongchu built Bao\'en Yuanjiao Temple <span class="cn">報恩元教寺</span> the following year in her memory. The first batch of bronze stupas, cast in the yimao year <span class="cn">乙卯年</span> (955), fell exactly on the third anniversary of her passing — so they were very likely made to transfer merit to her. Casting Aśoka stupas to honor the departed was a long-standing custom of the old Wuyue <span class="cn">吳越</span> lands, passed down from Tang <span class="cn">唐</span> through Song <span class="cn">宋</span>.' },
 
   /* ============ 古诗（金涂塔题咏） ============ */
-  'ayu.poem1.title': { zh:'咏钱忠懿王金涂塔版', en:'On the Gilt Stupa Print of King Qian Zhongyi' },
-  'ayu.poem1.author': { zh:'张 埙', en:'Zhang Xun' },
-  'ayu.poem1.sub': { zh:'清 · 乾隆年间', en:'Qing · Qianlong era' },
+  'ayu.poem1.title': { zh:'咏钱忠懿王金涂塔版', en:'On the Gilt Stupa Print of King Qian Zhongyi <span class="cn">钱忠懿王</span>' },
+  'ayu.poem1.author': { zh:'张 埙', en:'Zhang Xun <span class="cn">张埙</span>' },
+  'ayu.poem1.sub': { zh:'清 · 乾隆年间', en:'Qing <span class="cn">清</span> · Qianlong era <span class="cn">乾隆</span>' },
   'ayu.poem1.lines': { zh:'天目真人有子孙，\n锦衣玉带作功臣。\n踌躇八万四千塔，\n胜十四州送与人。', en:'The Celestial Immortal of Tianmu has descendants still,\nIn brocade robe and jade belt, a meritorious lord.\nHe cast 84,000 stupas, pondering long,\nBetter than surrendering the fourteen prefectures to another.' },
   'ayu.poem1.src': { zh:'《竹叶庵文集》', en:'Collected Works of the Bamboo-Leaf Retreat' },
 
-  'ayu.poem2.title': { zh:'尧章金铜佛塔歌', en:'Song of the Gilt-Bronze Buddha Stupa of Yaozhang' },
-  'ayu.poem2.author': { zh:'（宋）周文璞', en:'Zhou Wenpu (Song)' },
+  'ayu.poem2.title': { zh:'尧章金铜佛塔歌', en:'Song of the Gilt-Bronze Buddha Stupa of Yaozhang <span class="cn">尧章</span>' },
+  'ayu.poem2.author': { zh:'（宋）周文璞', en:'Zhou Wenpu <span class="cn">周文璞</span> (Song <span class="cn">宋</span>)' },
   'ayu.poem2.lines': { zh:'白石招我入书斋，使我速礼金涂塔。\n我疑此塔非世有，白石云是钱王禁中物。\n上作如来舍身相，饥鹰饿虎纷相向。\n拈起灵山受记时，龙天帝释应惆怅。\n形模远自流沙至，铸出今回更精致。\n钱王纳地归京师，流落都在西湖寺。\n钱王本是英雄人，白莲花见国王身。\n蛇乡虎落狗脚朕何如，锦袍玉带称功臣。\n天封坼开即退听，两浙不闻笳鼓竞。\n归来佛子作护持，太师尚父尚书令。\n一枚传到白石生，生今但有能诗声。\n同袍方外铦师兄，哦诗礼塔作佛事，同喫地炉山芋羹。\n何曾薰陆绮床供，但见相轮铜绿明。\n哦诗礼塔犹未毕，芦叶低飞山雨湿。', en:'The White Stone bade me enter his study and quickly revere the gilt stupa.\nI doubted such a stupa could exist in this world; he said it was a palace treasure of King Qian.\nOn it is cast the Tathāgata offering his body, hungry eagles and starving tigers closing in.\nRecalling the prophecy given on Vulture Peak, the dragon kings and Śakra would surely grieve.\nIts form came from afar across the flowing sands, cast now with even finer workmanship.\nWhen King Qian surrendered his realm and returned to the capital, it fell into a temple by West Lake.\nKing Qian was truly a hero — the white lotus revealed the body of a king.\nIn a land of serpents and tigers, a dog\'s lot, what is it to me? In brocade robe and jade belt he was styled a worthy lord.\nWhen the heavenly mandate split he withdrew, and all Zhejiang heard no clash of drums and horns.\nReturning, the Buddha\'s disciple served as guardian — Grand Tutor, Father, and Minister of State.\nOne came into the hands of Baishi, who now has only a poet\'s fame.\nHis comrade, the keen-minded senior brother beyond the world, chants verse and reveres the stupa as a Buddha-deed, sharing taro broth over an earthen hearth.\nNever was it offered on a perfumed couch of gharu-wood, but the bronze rings gleam with green patina.\nThe chanting and reverence are not yet done; reed leaves dip low as mountain rain soaks through.' },
 
-  'ayu.poem3.title': { zh:'题吴越金涂塔合拓本', en:'Inscribed on a Combined Rubbing of the Wuyue Gilt Stupa' },
-  'ayu.poem3.author': { zh:'（清）翁方纲', en:'Weng Fanggang (Qing)' },
-  'ayu.poem3.sub': { zh:'朱石君中丞得于绍兴寿量寺，阮芸台詹事拓以相寄。（乙卯）', en:'Obtained by Governor Zhu Shijun at Shouliang Temple in Shaoxing, and sent as a rubbing by Commissioner Ruan Yuntai. (Yimao year)' },
+  'ayu.poem3.title': { zh:'题吴越金涂塔合拓本', en:'Inscribed on a Combined Rubbing of the Wuyue <span class="cn">吴越</span> Gilt Stupa' },
+  'ayu.poem3.author': { zh:'（清）翁方纲', en:'Weng Fanggang <span class="cn">翁方纲</span> (Qing <span class="cn">清</span>)' },
+  'ayu.poem3.sub': { zh:'朱石君中丞得于绍兴寿量寺，阮芸台詹事拓以相寄。（乙卯）', en:'Obtained by Governor Zhu Shijun <span class="cn">朱石君</span> at Shouliang Temple <span class="cn">寿量寺</span> in Shaoxing <span class="cn">绍兴</span>, and sent as a rubbing by Commissioner Ruan Yuntai <span class="cn">阮芸台</span>. (Yimao year <span class="cn">乙卯</span>)' },
   'ayu.poem3.lines': { zh:'我铭毗陵赵藏椟，始辨钱镠记钱俶。\n已想憨山记堪续，圆顶铁轮如阿育。\n四周四合镂金蹙，月光尸毗无量福。\n本行往因如可读，聚沙居士钱之族。\n宝所从来即保叔，净慈先于白莲筑。\n方泉山雨哦铜绿，八万四千偈子熟。\n果现圆轮圆四幅，八觚四面相连属。\n朱十诗话到朱六，阮叙弘明阮元录。\n来印吾斋夜灯烛，梵天花树依金粟。\n一月千光川百渎，地炉芋羹记同宿。\n五代十国纷铸金，我昔手拓诃子林。\n癸亥丁卯赞塔阴，东西二塔光交森。\n款文四侧晦莫寻，后十载劳故友忱。\n剔尽倚壁苔花深，诸天佛名护宝琛。\n聚合莲萼围球琳，一四四一非差参。\n此塔此影无蠹蟫，白毫相光普照临。\n须弥芥子力孰任，八百年馀逝骎骎。\n欧史薛史搜湮沈，后来吊古古犹今。\n谁知采山山寺心，湖山江海和我吟，大洋风起回潮音。', en:'I inscribed the casket treasured by the Zhao of Piling, and first discerned Qian Liu from Qian Chu.\nI thought the record of Hanshan could be continued — a round-topped iron wheel like Aśoka\'s.\nFour sides enclosed, engraved with pressed gold — Moonlight King, Śibi, and boundless blessings.\nIf the past causes of this life could be read, the sand-gathering layman was of the Qian clan.\nThe precious site came from Baoshu, and Jingci was built before Bailian.\nAt Fangquan, mountain rain chants of green patina; the 84,000 gāthās are ripened.\nThe fruit reveals a round wheel in four panels, eight corners and four faces joined as one.\nFrom Zhu Ten\'s poetry talks to Zhu Six, Ruan\'s preface and Ruan Yuan\'s record.\nIt came to stamp my study by lamplight at night, Brahma-heaven flowers and trees resting on golden grain.\nOne moon with a thousand beams, a hundred streams — taro broth by the earthen hearth, remembering the shared night.\nThe Five Dynasties and Ten Kingdoms cast gold in profusion; I once took rubbings of the myrobalan grove.\nIn guihai and dingmao I praised the stupa\'s shade, east and west stupas interweaving their light.\nThe inscriptions on four sides are dim and hard to find; ten years later my old friend\'s devotion toiled on.\nScraping away the deep moss against the wall, the names of heavenly Buddhas guard the precious treasure.\nGathered lotus calyxes ring the fine jade — one and four and four and one, not in vain.\nThis stupa, this image, free of bookworms; the white-tuft radiance shines universally.\nWho can bear the power of Mount Sumeru in a mustard seed? Eight hundred years and more have sped away.\nThe histories of Ouyang and Xue search the sunken past; later mourners of antiquity find the ancient still the present.\nWho knows the heart of the mountain temple that gathers mountains — lake and hills, river and sea chime with my chant, as the great ocean\'s wind stirs the returning tide.' },
-  'ayu.poem3.note': { zh:'“一四四一非差参”句下作者自注引《维摩经》四天王献钵事，佛以手叠钵曰“一即四，四即一”。', en:'Under the line "one and four and four and one, not in vain," the author\'s own note cites the Vimalakīrti Sutra: when the four heavenly kings offered their bowls, the Buddha stacked them and said, "One is four, four is one."' },
+  'ayu.poem3.note': { zh:'“一四四一非差参”句下作者自注引《维摩经》四天王献钵事，佛以手叠钵曰“一即四，四即一”。', en:'Under the line "one and four and four and one, not in vain," the author\'s own note cites the Vimalakīrti Sutra <span class="cn">《维摩经》</span>: when the four heavenly kings offered their bowls, the Buddha stacked them and said, "One is four, four is one."' },
 
-  'ayu.poem4.title': { zh:'钱忠懿王金涂塔歌', en:'Song of the Gilt Stupa of King Qian Zhongyi' },
-  'ayu.poem4.author': { zh:'（清）蒋士铨（戊戌）', en:'Jiang Shiquan (Qing), wuxu year' },
+  'ayu.poem4.title': { zh:'钱忠懿王金涂塔歌', en:'Song of the Gilt Stupa of King Qian Zhongyi <span class="cn">钱忠懿王</span>' },
+  'ayu.poem4.author': { zh:'（清）蒋士铨（戊戌）', en:'Jiang Shiquan <span class="cn">蒋士铨</span> (Qing <span class="cn">清</span>), wuxu year <span class="cn">戊戌</span>' },
   'ayu.poem4.lines': { zh:'表忠谱载金涂塔，高六寸重卅五两。\n造自钱王乙卯年，入土无人拄牛杖。\n是岁忠懿立八秋，显德二年王佐周。\n销镕铜佛铸泉贝，诏废僧寺来杭州。\n钱王造塔惧功令，埋瘗地下同幽囚。\n史称吴越重聚敛，裸民以篾为衣裘。\n支提涂金渗膏血，求福恐累王清修。\n古来阿育王生金色子，妒妻易以彭亨豕。\n遂令八万四千妇，王怒诛之同日死。\n后思忏罪建浮屠，各以舍利承其趺。\n道人手掩日轮影，旭彩四射阎浮区。\n窣堵徒多恐无益，芥针枣叶牟尼力。\n辇载如山纳汴京，劫杀虽逃民骨立。\n此塔出土万历初，顾家掘自虞山隅。\n鄱阳姜与秀州蒋，各各所得形模殊。\n塔轮四面铸佛像，割肉舍身鹰虎饷。\n王能纳土救众生，不在区区诸变相。\n嘉禾涨生示拓本，桐乡金氏收藏谨。\n五百猕猴试绕看，乳滴菩提身不损。', en:'The Records of Loyalty list a gilt stupa, six inches tall and thirty-five taels in weight.\nCast by King Qian in the yimao year, buried where no one leaned a herding staff.\nThat year the Zhongyi king had reigned eight years; in Xiande 2 he served the Zhou.\nCopper Buddhas were melted down and coined, and a decree closed the temples of Hangzhou.\nKing Qian, fearing the edict, cast his stupas and buried them like prisoners in the earth.\nHistory says Wuyue taxed heavily, stripping the people to clothe them in rushes.\nThe chaitya\'s gilding seeped with sweat and blood; seeking blessings, he feared to burden the king\'s pure practice.\nOf old, King Aśoka begot a golden child, whom a jealous wife swapped for a bloated pig.\nThen the king, in fury, put 84,000 women to death in a single day.\nLater, repenting his sin, he built stupas, each bearing a relic at its base.\nA sage covered the sun\'s disc with his hand, and dawn light streamed across Jambudvīpa.\nStupas in profusion, yet of little use — the Buddha\'s power lies in a mustard seed, a needle, a date leaf.\nCarts bore them like mountains to the Song capital; though the people escaped slaughter, they were reduced to skin and bone.\nThis stupa was unearthed early in the Wanli reign, dug from a corner of Mount Yu by the Gu family.\nThe Jiang of Poyang and the Jiang of Xiuzhou each obtained one of differing form.\nThe four faces of the wheel are cast with Buddha images — the flesh-cutting, the body-offering, the eagle and tiger fed.\nThe king\'s true merit was surrendering his realm to save the people, not in these mere transformation scenes.\nJiahe\'s Zhang Sheng showed a rubbing, and the Jin family of Tongxiang keeps one carefully.\nLet five hundred monkeys circle and gaze — the milk-drop of bodhi harms not the body.' },
-  'ayu.poem4.note': { zh:'诗题下原注“戊戌”。诗中“顾家”下注“耿光”，“鄱阳姜”下注“尧章”，“秀州蒋”下注“尔龄”。', en:'The original note "wuxu" appears under the title. In the poem, "the Gu family" is annotated "Gengguang," "the Jiang of Poyang" as "Yaozhang," and "the Jiang of Xiuzhou" as "Erling."' },
+  'ayu.poem4.note': { zh:'诗题下原注“戊戌”。诗中“顾家”下注“耿光”，“鄱阳姜”下注“尧章”，“秀州蒋”下注“尔龄”。', en:'The original note "wuxu" <span class="cn">戊戌</span> appears under the title. In the poem, "the Gu family" <span class="cn">顾家</span> is annotated "Gengguang" <span class="cn">耿光</span>, "the Jiang of Poyang" <span class="cn">鄱阳姜</span> as "Yaozhang" <span class="cn">尧章</span>, and "the Jiang of Xiuzhou" <span class="cn">秀州蒋</span> as "Erling" <span class="cn">尔龄</span>.' },
 
-  'ayu.poem5.title': { zh:'钱忠懿王金涂塔诗朱石君师命作', en:'On the Gilt Stupa of King Qian Zhongyi, Written at the Request of Master Zhu Shijun' },
-  'ayu.poem5.author': { zh:'（清）张问陶（甲寅）', en:'Zhang Wentao (Qing), jiayin year' },
+  'ayu.poem5.title': { zh:'钱忠懿王金涂塔诗朱石君师命作', en:'On the Gilt Stupa of King Qian Zhongyi <span class="cn">钱忠懿王</span>, Written at the Request of Master Zhu Shijun <span class="cn">朱石君</span>' },
+  'ayu.poem5.author': { zh:'（清）张问陶（甲寅）', en:'Zhang Wentao <span class="cn">张问陶</span> (Qing <span class="cn">清</span>), jiayin year <span class="cn">甲寅</span>' },
   'ayu.poem5.lines': { zh:'钱王铸塔塔精巧，八百馀年尚完好。\n吾师好古偶得之，入手峥嵘一峰小。\n心怜灵物在泥滓，拂拭神光贡天子。\n预拓真形留数纸，传观共讶奇如此。\n我闻吴越当年兵马雄，霸才独守钱江东。\n坐看五代等儿戏，干戈篡乱殊匆匆。\n父子祖孙兄及弟，四王三世传忠懿。\n虎视眈眈不负嵎，迎周归宋知天意。\n维王慷慨承贻谋，直与武肃文穆忠显同千秋。\n英雄布施豪于佛，纳土能捐十四州。\n只今几度沧桑变，冷落天涯表忠观。\n万事销沈一塔存，岿然如见灵光殿。\n塔高五寸文曰保，书爵书名时乙卯。\n作制精严画象奇，不烦考订愁荒渺。\n我知神物关忠义，不比寻常藏舍利。\n王心即佛心，精神之所寄。\n不闻旃檀香，但觉风云气。\n恍如铁券昭灵异，色正芒寒天庙器。\n世人佞佛佛不知，佛以无我全其慈。\n即看贤王禦乱保吴越，何异尸毗割肉时。\n吁嗟乎，金刚不能坏，忠孝不可忘。\n后有钱弘俶，前有阿育王。\n人天八万四千塔，一潭一月腾辉光。\n君不见神僧捧刹入云去，更为升平世界祈祯祥。', en:'King Qian cast the stupa with exquisite skill; after eight hundred years it is still intact.\nMy master, a lover of antiquity, chanced upon it — a lofty little peak in hand.\nPitying this numinous thing mired in mud, he wiped it clean and offered its divine light to the emperor.\nTaking rubbings of its true form first, he kept several sheets; all who saw it marveled at such wonder.\nI have heard that Wuyue in those days had mighty troops, a hegemonic talent guarding the east of the Qiantang.\nWatching the Five Dynasties as a child\'s play, arms and usurpations rushed by in haste.\nFather, son, grandsons, brothers — through four kings and three generations the Zhongyi line passed.\nGlaring like a tiger from its crag, welcoming the Zhou and submitting to Song, he knew heaven\'s will.\nThe king nobly carried on the inherited plan, standing with Wusu, Wenmu and Zhongxian through the ages.\nA hero more generous than the Buddha, surrendering his realm he gave away fourteen prefectures.\nNow how many turns of fortune have passed; the Temple of Loyalty stands lonely at the world\'s edge.\nAll things have sunk away, yet one stupa remains, towering like the Hall of Numinous Light.\nThe stupa is five inches tall, inscribed "Bao"; the title and name written in the yimao year.\nIts making is precise and its imagery wondrous, needing no pedantic research to dispel obscurity.\nI know this numinous thing is bound to loyalty, unlike the common relic\'s keeping.\nThe king\'s heart was the Buddha\'s heart, the abode of his spirit.\nNo sandalwood fragrance is heard, only the air of wind and cloud.\nLike the iron covenant revealing its marvel, its color is upright and cold, a vessel of the heavenly shrine.\nThe world flatters the Buddha who does not know; the Buddha perfects his compassion through selflessness.\nSee how the worthy king quelled chaos and preserved Wuyue — no different from Śibi cutting his flesh.\nAlas! Vajra cannot be destroyed, loyalty and filial piety cannot be forgotten.\nAfter him came Qian Hongchu, before him King Aśoka.\nEighty-four thousand stupas between humans and gods — one pool, one moon, streaming with radiant light.\nDo you not see the holy monk, bearing the finial, ascending into the clouds to pray blessings for a world at peace.' },
-  'ayu.poem5.note': { zh:'诗题下原注“甲寅”，出处为《船山诗草》卷十一。', en:'The original note "jiayin" appears under the title; the source is Volume 11 of the Draft Poems of Chuanshan.' },
+  'ayu.poem5.note': { zh:'诗题下原注“甲寅”，出处为《船山诗草》卷十一。', en:'The original note "jiayin" <span class="cn">甲寅</span> appears under the title; the source is Volume 11 of the Draft Poems of Chuanshan <span class="cn">《船山诗草》</span>.' },
 
-  'ayu.poem6.title': { zh:'吴越钱忠懿王金涂塔拓本覃溪前辈属题三十二韵', en:'Thirty-two Rhymes Inscribed on a Rubbing of the Gilt Stupa of King Qian Zhongyi, at the Request of Senior Tanxi' },
-  'ayu.poem6.author': { zh:'（清）吴锡麒', en:'Wu Xiqi (Qing)' },
+  'ayu.poem6.title': { zh:'吴越钱忠懿王金涂塔拓本覃溪前辈属题三十二韵', en:'Thirty-two Rhymes Inscribed on a Rubbing of the Gilt Stupa of King Qian Zhongyi <span class="cn">钱忠懿王</span>, at the Request of Senior Tanxi <span class="cn">覃溪</span>' },
+  'ayu.poem6.author': { zh:'（清）吴锡麒', en:'Wu Xiqi <span class="cn">吴锡麒</span> (Qing <span class="cn">清</span>)' },
   'ayu.poem6.lines': { zh:'吴越当年事，杭人易感吾。\n券文迷铁绣，塔制辨金涂。\n渺渺经千载，棱棱判八觚。\n宝光腾煜爚，翠墨拓模糊。\n扪觉鬘云湿，披同贝叶腴。\n法轮尊阿育，梵像变休屠。\n活画婆心热，生开佛面癯。\n人天惊惨淡，鹰虎伺刲刳。\n即物呈诸相，观空悟此躯。\n坐来双树净，礼罢一灯孤。\n日下催新咏，钱塘梦旧湖。\n王家宏夙愿，沙量纪浮图。\n匝地神为守，同时日可摸。\n庄严分种种，轻重等铢铢。\n象教慈悲托，龙宫富贵俱。\n能将刀放下，肯有赋追呼。\n长养菩提子，圆成舍利珠。\n䌽绳留后验，锦树换前模。\n民惧干戈及，君先版宇输。\n宰官身偶现，菩萨力相扶。\n北阙恩诚渥，西方證不殊。\n山河馀幻影，宫殿付荒芜。\n绮陌歌全歇，铜仙泪亦枯。\n斜阳纷瓦砾，好事起菰芦。\n谛演传衣侣，谈徵考古徒。\n杨枝先漱齿，芋火共围炉。\n讵比黄妃卓，常供白石娱。\n婆留称或误，显德据非诬。\n记可憨山续，文经秀水摹。\n问年仍乙卯，阅世只须臾。\n花雨飞空有，潮音入耳无。\n皈心功德海，合十诵南膜。', en:'Of Wuyue\'s affairs of old, the people of Hangzhou still stir my heart.\nThe covenant text is lost in rust of iron, but the stupa\'s form reveals its gilt.\nDistant across a thousand years, its edges mark out eight corners.\nIts precious light rises bright, the green-ink rubbing grows faint.\nTouching it, the cloudy hair feels damp; leafing through it like palm-leaf scripture, rich and full.\nThe Dharma-wheel honors Aśoka, the Brahma image transforms the slaughter-house.\nVividly painted, the compassionate heart is warm; the Buddha\'s face emerges gaunt.\nHumans and gods are startled by its bleakness; eagles and tigers wait to rend and cut.\nThrough the object all forms appear; contemplating emptiness, one awakens to this body.\nSeated, the twin trees are pure; after reverence, a single lamp stands lone.\nBeneath the sun new verses are urged; at Qiantang I dream of the old lake.\nThe Wang house fulfilled its long vow, recording the stupa by measures of sand.\nGods guard the ground all around, and the sun itself may be touched.\nSolemnity divided into kinds, weight measured to the last grain.\nThe image-teaching rests on compassion, the dragon\'s palace holds riches too.\nAble to lay down the sword, would he suffer the tax-collector\'s summons?\nNurturing the seed of bodhi, perfecting the relic-pearl.\nThe colored cord leaves proof for later; the brocade tree replaces the old model.\nThe people feared the clash of arms, but their lord first yielded his territory.\nThe magistrate\'s body appears by chance, the bodhisattva\'s power lends support.\nThe northern court\'s favor was truly generous, and the western proof is no different.\nMountains and rivers leave but phantom shadows; palaces are given over to ruin.\nThe songs of the silk-lined streets are all stilled, and the bronze immortal\'s tears run dry.\nIn the setting sun lie scattered tiles and bricks; good deeds arise among the reeds.\nFaithfully expounding to robe-transmitting companions, discussing evidence with those who study antiquity.\nRinsing the mouth first with a willow twig, sharing the fire and taro around the hearth.\nNot to be compared with the Yellow Consort\'s heights, but ever pleasing the White Stone.\nThe name "Poliu" may be mistaken, but the Xiande record is not false.\nThe record may continue that of Hanshan, and the text is modeled by Xiushui.\nAsked the year, it is still yimao; the world passes in a mere instant.\nFlower-rain falls through the void, the tide\'s sound enters the ear yet is gone.\nTaking refuge in the ocean of merit, I press palms together and chant "Namo."' },
   'ayu.poem6.note': { zh:'“问年仍乙卯”句下原注：“塔为显德乙卯造，至今年乙卯，盖七千五百八十四甲子矣。”', en:'Under the line "asked the year, it is still yimao," the original note reads: "The stupa was made in the yimao year of Xiande; to this year, also yimao, it has been 7,584 jiazi cycles."' },
 
   'ayu.poem7.title': { zh:'金涂塔墨三首', en:'Three Poems on the Gilt Stupa Ink' },
-  'ayu.poem7.author': { zh:'（清）祁寯藻（戊午）', en:'Qi Junzao (Qing), wuwu year' },
-  'ayu.poem7.sub': { zh:'乾隆壬子浴佛日，巴慰祖子安、黄洙依宣、胡唐寿客、朱文翰见庵集黄钺左君紫阳山馆，观钱忠懿王金涂塔拓本，因缩摹四角之一，同造墨。', en:'On the Buddha-bathing day of Qianlong renzi, Ba Weizu (Zi\'an), Huang Zhu (Yixuan), Hu Tang (Shouke) and Zhu Wenhan (Jian\'an) gathered with Huang Yue (Left Lord) at the Ziyang Mountain Studio, viewed a rubbing of the gilt stupa of King Qian Zhongyi, and together made ink by copying one of its four corners in reduced form.' },
+  'ayu.poem7.author': { zh:'（清）祁寯藻（戊午）', en:'Qi Junzao <span class="cn">祁寯藻</span> (Qing <span class="cn">清</span>), wuwu year <span class="cn">戊午</span>' },
+  'ayu.poem7.sub': { zh:'乾隆壬子浴佛日，巴慰祖子安、黄洙依宣、胡唐寿客、朱文翰见庵集黄钺左君紫阳山馆，观钱忠懿王金涂塔拓本，因缩摹四角之一，同造墨。', en:'On the Buddha-bathing day of Qianlong <span class="cn">乾隆</span> renzi <span class="cn">壬子</span>, Ba Weizu (Zi\'an) <span class="cn">巴慰祖</span>, Huang Zhu (Yixuan) <span class="cn">黄洙</span>, Hu Tang (Shouke) <span class="cn">胡唐</span> and Zhu Wenhan (Jian\'an) <span class="cn">朱文翰</span> gathered with Huang Yue (Left Lord) <span class="cn">黄钺</span> at the Ziyang Mountain Studio <span class="cn">紫阳山馆</span>, viewed a rubbing of the gilt stupa of King Qian Zhongyi <span class="cn">钱忠懿王</span>, and together made ink by copying one of its four corners in reduced form.' },
   'ayu.poem7.lines': { zh:'其一\n王孙已转庄严劫，乃祖犹将铁券遗。\n鸟喙锦衣应暗笑，良金那不铸鸱夷。\n其二\n为问陈徐谁好古，曾将此塔换兰亭。\n化身仍作青螺髻，我欲烦君写石经。\n其三（原缺）', en:'I\nThe princely descendant has passed through the majestic kalpa, yet his ancestor still left the iron covenant behind.\nThe bird-billed one in brocade should laugh in secret — why not cast the fine gold into a wine-skin?\nII\nI ask: of Chen and Xu, who loved antiquity more? He once traded this stupa for the Orchid Pavilion.\nThe transformed body still forms the blue spiral topknot; I would trouble you to copy the stone scriptures.\nIII (text lost)' },
-  'ayu.poem7.note': { zh:'其一注：“吴越国王钱弘俶敬造八万四千宝塔，乙卯岁记。竹垞误以忠懿为武肃，盖未见塔及拓本耳。”其二首句注：“乾隆间陈广宁以《定武兰亭帖》易徐竹溪所得塔赠朱文正，后进入内府。陈广宁与徐山人华联句诗载《金石契》。”末句注：“潘绂庭赠此墨，适案头有蜀石经拓本。”其三原文暂缺。', en:'Note to I: "Qian Hongchu, King of Wuyue, reverently cast 84,000 precious stupas, recorded in the yimao year. Zhucha mistakenly took Zhongyi for Wusu, having never seen the stupa or its rubbing." Note to II, first line: "In the Qianlong era, Chen Guangning traded the Dingwu Orchid Pavilion rubbing for the stupa obtained by Xu Zhuxi, and gave it to Zhu Wenzheng, after which it entered the imperial collection. The linked verses of Chen Guangning and the recluse Xu Hua are recorded in the Inscriptions on Bronze and Stone." Note to the last line: "Pan Futing gave this ink, and by chance a rubbing of the Shu stone scriptures lay on the desk." The text of III is lost.' },
+  'ayu.poem7.note': { zh:'其一注：“吴越国王钱弘俶敬造八万四千宝塔，乙卯岁记。竹垞误以忠懿为武肃，盖未见塔及拓本耳。”其二首句注：“乾隆间陈广宁以《定武兰亭帖》易徐竹溪所得塔赠朱文正，后进入内府。陈广宁与徐山人华联句诗载《金石契》。”末句注：“潘绂庭赠此墨，适案头有蜀石经拓本。”其三原文暂缺。', en:'Note to I: "Qian Hongchu <span class="cn">钱弘俶</span>, King of Wuyue <span class="cn">吴越国</span>, reverently cast 84,000 precious stupas, recorded in the yimao year <span class="cn">乙卯</span>. Zhucha <span class="cn">竹垞</span> mistakenly took Zhongyi <span class="cn">忠懿</span> for Wusu <span class="cn">武肃</span>, having never seen the stupa or its rubbing." Note to II, first line: "In the Qianlong era <span class="cn">乾隆</span>, Chen Guangning <span class="cn">陈广宁</span> traded the Dingwu Orchid Pavilion rubbing <span class="cn">定武兰亭帖</span> for the stupa obtained by Xu Zhuxi <span class="cn">徐竹溪</span>, and gave it to Zhu Wenzheng <span class="cn">朱文正</span>, after which it entered the imperial collection. The linked verses of Chen Guangning and the recluse Xu Hua <span class="cn">徐华</span> are recorded in the Inscriptions on Bronze and Stone <span class="cn">《金石契》</span>." Note to the last line: "Pan Futing <span class="cn">潘绂庭</span> gave this ink, and by chance a rubbing of the Shu stone scriptures <span class="cn">蜀石经</span> lay on the desk." The text of III is lost.' },
 
-  'ayu.poem8.title': { zh:'题钱忠懿王金涂塔搨本後', en:'Inscribed after a Rubbing of the Gilt Stupa of King Qian Zhongyi' },
-  'ayu.poem8.author': { zh:'（清）阮元', en:'Ruan Yuan (Qing)' },
+  'ayu.poem8.title': { zh:'题钱忠懿王金涂塔搨本後', en:'Inscribed after a Rubbing of the Gilt Stupa of King Qian Zhongyi <span class="cn">钱忠懿王</span>' },
+  'ayu.poem8.author': { zh:'（清）阮元', en:'Ruan Yuan <span class="cn">阮元</span> (Qing <span class="cn">清</span>)' },
   'ayu.poem8.lines': { zh:'晉僊居士白石翁，哦誹禮塔書齋中。\n當年此塔世巳罕，何期手揭金塗銅。\n金塗冶塔合四片，寶像曇花開面面。\n頂出觚稜窣堵空，款字王方皆可𧠆。\n國稱吳越王姓錢，敬造塔八萬四千。\n巳從阿育敬三寶，乙卯奉朔猶周年。\n迄今龍集歲癸丑，物壽八百三十九。\n黃金剝盡相輪摧，本來面目仍長久。\n摩挲面目認金仙，珠林崖虎諸慈天。\n月光寶首尸毗肉，捐舍念比金剛堅。\n錢塘金錫賦如土，官民造塔多戊午。\n不似中原少貨錢，盡毁金身付鑪鼓。\n毁比邱七級頃時成，震旦東南施衆生。\n一塔卽具一功德，如來隨放金光眀。\n梵夾刼塵成往事，可憐鐵奍鐫金字。\n玉册錦袍歸大梁，惟有浮圖鎮山寺。\n白蓮詩句采山詞，惜無款識空吟詩。\n毬攘我喜得全相，欲示小長蘆釣師。', en:'The layman Jinxian, the White Stone Elder, chanted verse and revered the stupa in his study.\nIn those days such a stupa was already rare in the world — how could one hope to lift its gilt-bronze by hand?\nThe gilt stupa was cast in four joined panels, with precious images and udumbara flowers on every face.\nA grooved finial rises from the empty chaitya, and the royal title can be seen on every side.\nThe realm was Wuyue, the king surnamed Qian, who reverently cast 84,000 stupas.\nHe venerated the Three Jewels in Aśoka\'s manner, in the yimao year of Xiande.\nNow the dragon-star has reached the guichou year, and the object has lived eight hundred and thirty-nine years.\nThe gold has worn away and the rings are broken, yet its true face still endures.\nStroking its countenance, I know the golden immortal — the jeweled grove, the cliff tigers, the compassionate heavens.\nMoonlight\'s precious head and Śibi\'s flesh were offered with a resolve firm as vajra.\nAt Qiantang, gold and tin were cheap as earth, and officials and people cast many stupas in wuwu years.\nUnlike the central plains, short of coin, they melted down every gilded image for the furnace.\nA seven-tiered monk\'s stupa rose in an instant, bestowing blessings on the southeast of China.\nOne stupa holds one merit, and the Tathāgata radiates golden light.\nThe palm-leaf scriptures, worn by kalpas, are now but past; alas, the iron casing still bears gilded characters.\nThe jade tablets and brocade robes returned to the Liang capital; only the stupa guards the mountain temple.\nThe White Lotus verses, the Caishan lines — alas, without signature I merely chant in vain.\nIn the bustle, I rejoice to have the whole image, and would show it to the angling master of Xiaochanglu.' },
-  'ayu.poem8.note': { zh:'此诗见清钱泳辑《金涂铜塔考》。“金塗冶塔合四片”至“頂出觚稜窣堵空”等句，描述塔身四片合成、顶有觚棱之形制。', en:'This poem appears in Qian Yong\'s Studies of the Gilt-Bronze Stupa. The lines from "The gilt stupa was cast in four joined panels" to "A grooved finial rises from the empty chaitya" describe the stupa\'s four-panel body and its grooved finial.' },
+  'ayu.poem8.note': { zh:'此诗见清钱泳辑《金涂铜塔考》。“金塗冶塔合四片”至“頂出觚稜窣堵空”等句，描述塔身四片合成、顶有觚棱之形制。', en:'This poem appears in Qian Yong\'s <span class="cn">钱泳</span> Studies of the Gilt-Bronze Stupa <span class="cn">《金涂铜塔考》</span>. The lines from "The gilt stupa was cast in four joined panels" to "A grooved finial rises from the empty chaitya" describe the stupa\'s four-panel body and its grooved finial.' },
 
   'ayu.poem9.title': { zh:'宝塔诗', en:'Poem on the Precious Stupa' },
-  'ayu.poem9.author': { zh:'（清）徐旭旦', en:'Xu Xudan (Qing)' },
+  'ayu.poem9.author': { zh:'（清）徐旭旦', en:'Xu Xudan <span class="cn">徐旭旦</span> (Qing <span class="cn">清</span>)' },
   'ayu.poem9.lines': { zh:'宝塔珍藏不记年，黄金色相自天然。\n燃灯古佛依青象，面壁维摩坐白莲。\n异质坚贞同琬琰，奇文错落费雕镌。\n嗣王雅制惟余一，八万四千何处传。', en:'The precious stupa has been treasured through unnumbered years, its golden countenance natural.\nThe ancient Buddha Dipaṃkara leans on a green elephant; Vimalakīrti faces the wall upon a white lotus.\nIts strange substance, firm and true as fine jade, its wondrous inscriptions scattered, cost much carving.\nOf the noble work of the successor king only one remains — where have the 84,000 gone?' },
-  'ayu.poem9.note': { zh:'此诗见《金涂铜塔考》。“嗣王雅制惟余一”句，谓钱弘俶所造八万四千塔，传世仅存其一。', en:'This poem appears in Studies of the Gilt-Bronze Stupa. The line "of the noble work of the successor king only one remains" means that of the 84,000 stupas made by Qian Hongchu, only one survives.' },
+  'ayu.poem9.note': { zh:'此诗见《金涂铜塔考》。“嗣王雅制惟余一”句，谓钱弘俶所造八万四千塔，传世仅存其一。', en:'This poem appears in Studies of the Gilt-Bronze Stupa <span class="cn">《金涂铜塔考》</span>. The line "of the noble work of the successor king only one remains" means that of the 84,000 stupas made by Qian Hongchu <span class="cn">钱弘俶</span>, only one survives.' },
 
   'ayu.poem10.title': { zh:'金涂塔拓本歌', en:'Song of the Gilt Stupa Rubbing' },
-  'ayu.poem10.author': { zh:'（清）周震荣', en:'Zhou Zhenrong (Qing)' },
+  'ayu.poem10.author': { zh:'（清）周震荣', en:'Zhou Zhenrong <span class="cn">周震荣</span> (Qing <span class="cn">清</span>)' },
   'ayu.poem10.lines': { zh:'凤凰山前万松岭，碧波云鹤空遗亭。\n表忠观但存二石，金涂塔况余千龄。\n深宫五夜范金土，西域如来留影形。\n白莲迹古僧难问，白石斋头诗可听。\n家山梦远桐乡好，雅事人传翠墨灵。\n坐想临安千载上，笃生异人五季丁。\n弩却胥涛楼叠雪，衙排石笋山围青。\n万姓依王王佞佛，佛身千亿千穹冥。\n蜀汉同时纷割据，触蛮一角悲磷萤。\n丛丛谁衣山头锦，戚戚终怜牛角鼮。\n翠钿紫陌春花辇，私第黄金海物瓶。\n还乡唱罢王孙去，保叔崔峨月入棂。\n乌井荒祠遗老拜，北邙宿草东风醒。\n君去更寻握发殿，苍苔败瓦，或有功臣型。', en:'Before Mount Fenghuang, on Wansong Ridge, the blue waves and cloud cranes leave only a lonely pavilion.\nThe Temple of Loyalty keeps but two stones, while the gilt stupa has survived a thousand years.\nIn the deep palace at the fifth watch gold and earth were molded, the Tathāgata of the Western Regions leaving his form.\nThe White Lotus\'s ancient traces are hard for a monk to trace, but the White Stone\'s verse is worth hearing.\nDreaming far of my homeland, fine is Tongxiang; men hand down the refined deed, the green-ink\'s spirit.\nSeated, I think of Lin\'an a thousand years past, when an extraordinary man was born in the Five Dynasties.\nCrossbows held back the tides of Xu, towers piled snow, the office ranged like stone bamboo amid green mountains.\nThe people trusted the king, and the king flattered the Buddha — the Buddha\'s body a thousand myriads in the vast heavens.\nShu and Han contended in the same age, a corner of the world grieved with fireflies\' glow.\nWho clothes the mountaintop in brocade, layer on layer? Sorrowful at last, one pities the goral of the ox-horn.\nThe emerald hairpins and purple lanes of spring flower-carriages, the gold and sea-treasure vases of a private house.\nAfter the homecoming song, the princeling departs; on the lofty Baoshu the moon enters the lattice.\nAt the Black Well, the ruined shrine is bowed to by surviving elders; on Beimang the old grass wakes in the east wind.\nWhen you go, seek further the Hall of Grasping Hair — among grey moss and broken tiles, perhaps a worthy official\'s likeness remains.' },
-  'ayu.poem10.note': { zh:'此诗在《清诗别裁》等集中题作《吴越王舍利塔》。《金涂铜塔考》所载题作《金涂塔拓本歌》，今从用户所题。诗中“白石斋头”指姜夔（白石道人），“白莲迹古”指杭州白莲寺，皆与金涂塔流传故实相关。', en:'This poem is titled "The Relic Stupa of the King of Wuyue" in the Selected Poems of the Qing and other collections. In Studies of the Gilt-Bronze Stupa it is titled "Song of the Gilt Stupa Rubbing," which is followed here. In the poem, "the White Stone\'s study" refers to Jiang Kui (the White Stone Daoist), and "the White Lotus\'s ancient traces" to Bailian Temple in Hangzhou, both connected with the stupa\'s transmission.' },
+  'ayu.poem10.note': { zh:'此诗在《清诗别裁》等集中题作《吴越王舍利塔》。《金涂铜塔考》所载题作《金涂塔拓本歌》，今从用户所题。诗中“白石斋头”指姜夔（白石道人），“白莲迹古”指杭州白莲寺，皆与金涂塔流传故实相关。', en:'This poem is titled "The Relic Stupa of the King of Wuyue <span class="cn">吴越王</span>" in the Selected Poems of the Qing <span class="cn">《清诗别裁》</span> and other collections. In Studies of the Gilt-Bronze Stupa <span class="cn">《金涂铜塔考》</span> it is titled "Song of the Gilt Stupa Rubbing," which is followed here. In the poem, "the White Stone\'s study" refers to Jiang Kui <span class="cn">姜夔</span> (the White Stone Daoist <span class="cn">白石道人</span>), and "the White Lotus\'s ancient traces" to Bailian Temple <span class="cn">白莲寺</span> in Hangzhou <span class="cn">杭州</span>, both connected with the stupa\'s transmission.' },
 
-  'ayu.poem11.title': { zh:'题黄小松所得金涂塔福本后', en:'Inscribed after the Auspicious Copy of the Gilt Stupa Obtained by Huang Xiaosong' },
-  'ayu.poem11.author': { zh:'（清）程晋芳', en:'Cheng Jinfang (Qing)' },
+  'ayu.poem11.title': { zh:'题黄小松所得金涂塔福本后', en:'Inscribed after the Auspicious Copy of the Gilt Stupa Obtained by Huang Xiaosong <span class="cn">黄小松</span>' },
+  'ayu.poem11.author': { zh:'（清）程晋芳', en:'Cheng Jinfang <span class="cn">程晋芳</span> (Qing <span class="cn">清</span>)' },
   'ayu.poem11.lines': { zh:'射潮之弩铁券书，武肃遗迹今存无。\n文孙建塔铸塔瓦，搨本宛觏金涂涂。\n佛容糢糊略可辨，兽像驯扰如堪呼。\n岂其听经在林莽，摆脱杀戮开顽愚。\n此非白莲寺僧所藏弆，亦非晋仙句里所仿摹。\n分明一片好烟雨，入手翠剥山云肤。\n其背有文肖隶古，岁在乙卯开笵模。\n姓名深刻示恭敬，下编人字为合符。\n南朝四百八十寺，侈想要遣百倍逾。\n宝石宝倜费研考，此塔倘在王宫隅。\n是年长虹贯楼殿，从晋伐虢嗟哉虞！\n火轮小儿兆见矣，金轮广被奚为乎？\n山河瓦全人玉立，衮衣赤舄中朝趋。\n亿人兆人免兵革，王与佛力交匡扶。\n虽云奢侈厥功大，欧公诮议毋乃迂。\n近闻表忠观初本，出土照耀钱塘湖。\n楷书端正字绝小，不似摹本肆弗拘。\n后先迭出果盛事，寸绿大可联碑趺。\n仁人事事足千古，创制奚必追昆吾。', en:'The tide-shooting crossbow and the iron covenant\'s writing — do any traces of Wusu remain today?\nHis descendant built stupas and cast the tiles, and the rubbing plainly shows the gilt.\nThe Buddha\'s countenance is blurred but dimly discernible, the beast-images tame as if answerable to a call.\nCould they have heard the sutra in the forest, casting off slaughter and opening the dull-witted?\nThis is neither the one kept by the monks of Bailian Temple, nor the one imitated in Jinxian\'s verses.\nPlainly a fine stretch of misty rain, in hand its emerald flakes like the skin of mountain clouds.\nOn its back is writing resembling ancient clerical script, the mold opened in the yimao year.\nThe name carved deep shows reverence, the character "ren" below as a matching tally.\nThe southern dynasties had 480 temples, and grand dreams would surpass them a hundredfold.\nThe precious stone and precious rarity cost much study — this stupa perhaps once stood in a corner of the royal palace.\nThat year a long rainbow pierced the halls, attacking Guo from Jin — alas for Yu!\nThe fire-wheel child has shown his omen; what avails the golden wheel\'s wide spreading?\nMountains and rivers are preserved whole, men stand like jade, in dragon robe and crimson shoes they serve the central court.\nMillions and millions are spared the clash of arms — king and Buddha jointly lend their aid.\nThough called extravagant, its merit is great; Ouyang\'s criticism is perhaps too pedantic.\nLately I hear the original copy of the Temple of Loyalty has been unearthed, shining over Qiantang Lake.\nIts regular script is upright and minute, unlike the unruly copies.\nEmerging one after another, it is truly a grand event; a sliver of green may join the stele\'s base.\nA benevolent man\'s deeds are enough for all ages — why need his works rival Kunwu?' },
-  'ayu.poem11.note': { zh:'此诗见《金涂铜塔考》，题作“前题”。用户所题“题黄小松所得金涂塔福本后”中“福本”当为“拓本”之异写。黄小松即黄易，清代金石学家。', en:'This poem appears in Studies of the Gilt-Bronze Stupa, titled "Previous Theme." In the user\'s title "Inscribed after the Auspicious Copy of the Gilt Stupa Obtained by Huang Xiaosong," "auspicious copy" should read "rubbing." Huang Xiaosong is Huang Yi, a Qing-dynasty epigrapher.' },
+  'ayu.poem11.note': { zh:'此诗见《金涂铜塔考》，题作“前题”。用户所题“题黄小松所得金涂塔福本后”中“福本”当为“拓本”之异写。黄小松即黄易，清代金石学家。', en:'This poem appears in Studies of the Gilt-Bronze Stupa <span class="cn">《金涂铜塔考》</span>, titled "Previous Theme." In the user\'s title "Inscribed after the Auspicious Copy of the Gilt Stupa Obtained by Huang Xiaosong," "auspicious copy" should read "rubbing." Huang Xiaosong <span class="cn">黄小松</span> is Huang Yi <span class="cn">黄易</span>, a Qing-dynasty <span class="cn">清</span> epigrapher.' },
+  /* ============ 参考文献页 ============ */
+  'ref.entry': { zh:'参考文献 · 资料来源', en:'References · Sources' },
+  'ref.kicker': { zh:'资 料 来 源', en:'SOURCES & REFERENCES' },
+  'ref.title':  { zh:'参 考 文 献', en:'References' },
+  'ref.sub':    { zh:'本站所涉经籍、史事、文物与地名，依下列典籍与公开资料校订 · 仅供参考', en:'Scriptures, historical events, relics and place-names on this site are collated against the following texts and public sources · for reference only' },
+  'ref.back':   { zh:'合 掌 收 起', en:'Close with palms joined' },
+  'ref.sec1':   { zh:'藏 经 · 译 本', en:'Canon & Translations' },
+  'ref.sec2':   { zh:'吴 越 国 · 宝 箧 印 塔', en:'Wuyue Kingdom · the Baoqieyin Stupa' },
+  'ref.sec3':   { zh:'雷 峰 塔 · 出 土 文 物', en:'Leifeng Pagoda · Unearthed Relics' },
+  'ref.sec4':   { zh:'东 传 高 丽 · 日 本', en:'Eastward to Goryeo & Japan' },
+  'ref.sec5':   { zh:'丝 路 · 求 法 僧 · 地 图', en:'Silk Road · Pilgrims · Maps' },
+  'ref.sec6':   { zh:'工 具 · 图 像 · 数 据', en:'Tools · Images · Data' },
+
+  'ref.i1': { zh:'《一切如来心秘密全身舍利宝箧印陀罗尼经》，唐·不空 译，收于《大正新修大藏经》第十九册 No.1022（CBETA 电子佛典集成，<span class="ref-cn">T19n1022</span>）。', en:'Sutra of the Whole-Body Relic Treasure Chest Seal Dharani, tr. Amoghavajra (Tang), in <span class="ref-t">Taishō Shinshū Daizōkyō</span> vol. 19, no. 1022 (CBETA, <span class="ref-cn">T19n1022</span>).' },
+  'ref.i2': { zh:'<span class="ref-t">CBETA 中华电子佛典协会</span>（CBETA Online），大正藏全文检索与原文对照。<span class="ref-pub">cbetaonline.dila.edu.tw</span>', en:'<span class="ref-t">CBETA Chinese Buddhist Electronic Text Association</span> (CBETA Online), full-text search and collation of the Taishō canon. <span class="ref-pub">cbetaonline.dila.edu.tw</span>' },
+  'ref.i3': { zh:'<span class="ref-t">SAT 大正藏文本库</span>（东京大学），大正藏 No.1022 数字化文本。<span class="ref-pub">21dzk.l.u-tokyo.ac.jp/SAT</span>', en:'<span class="ref-t">SAT Daizōkyō Text Database</span> (University of Tokyo), digitized text of Taishō no. 1022. <span class="ref-pub">21dzk.l.u-tokyo.ac.jp/SAT</span>' },
+  'ref.i4': { zh:'梵文罗马转写参考悉昙梵字研究诸本；英译参考 <span class="ref-t">The Sutra of the Whole-Body Relic Treasure Chest Seal Dharani</span> 英译本（译者佚名流通本）。', en:'Sanskrit romanization follows various studies of Siddhaṃ script; the English rendering references the circulating translation <span class="ref-t">The Sutra of the Whole-Body Relic Treasure Chest Seal Dharani</span> (translator unnamed).' },
+
+  'ref.i5': { zh:'<span class="ref-t">《十国春秋》</span>（清·吴任臣），卷七十八〈吴越世家〉，载钱镠、钱弘俶事迹。', en:'<span class="ref-t">Shiguo Chunqiu (Spring and Autumn of the Ten Kingdoms)</span>, by Wu Renchen (Qing), juan 78 "House of Wuyue," on Qian Liu and Qian Hongchu.' },
+  'ref.i6': { zh:'<span class="ref-t">《金涂铜塔考》</span>（清·钱泳辑），考吴越金涂塔（阿育王塔）形制、装藏与流传。', en:'<span class="ref-t">Jintu Tongta Kao (Studies of the Gilt-Bronze Stupa)</span>, ed. Qian Yong (Qing), on the form, consecration and transmission of the Wuyue gilt stupa.' },
+  'ref.i7': { zh:'宁波<span class="ref-t">阿育王寺</span>与鄮县阿育王塔相关金石与寺志资料；916 年钱镠迎奉阿育王塔事见方志记载。', en:'Epigraphic and monastic records of <span class="ref-t">Aśoka Temple in Ningbo</span> and the Aśoka Stupa of Mao County; the 916 escort of the stupa to Hangzhou by Qian Liu follows local gazetteers.' },
+
+  'ref.i8': { zh:'<span class="ref-t">雷峰塔遗址考古发掘</span>（2001 年，浙江省文物考古研究所），地宫出土鎏金纯银阿育王塔、金棺、佛螺髻发舍利及五代刻本《宝箧印陀罗尼经》残卷。', en:'<span class="ref-t">Archaeological excavation of the Leifeng Pagoda site</span> (2001, Zhejiang Provincial Institute of Cultural Relics and Archaeology), which unearthed the gilt-silver Aśoka Stupa, golden casket, ushnisha hair relics and fragments of the Five Dynasties block-printed Baoqieyin Dharani Sutra.' },
+  'ref.i9': { zh:'鲁迅〈<span class="ref-t">论雷峰塔的倒掉</span>〉（1924）、《再论雷峰塔的倒掉》（1925），收《坟》。', en:'Lu Xun, "<span class="ref-t">On the Fall of Leifeng Pagoda</span>" (1924) and "Again on the Fall of Leifeng Pagoda" (1925), collected in <span class="ref-pub">The Grave (Fen)</span>.' },
+  'ref.i10': { zh:'雷峰塔重建（2002 年）与遗址博物馆陈列资料；塔砖藏经八万四千卷之说见历代塔志与发掘简报。', en:'Records of the 2002 reconstruction and the site museum; the tradition of 84,000 sutra scrolls hidden in the bricks follows pagoda records and excavation reports.' },
+
+  'ref.i11': { zh:'<span class="ref-t">《无垢净光大陀罗尼经》</span>木刻卷轴（1966 年庆州佛国寺释迦塔出土，韩国国宝第 126 号），为现存最早木刻印刷品之一。', en:'The woodblock scroll of the <span class="ref-t">Great Dharani Sutra of Immaculate and Pure Light</span> (found 1966 in the Śākyamuni Stupa at Bulguksa, Gyeongju; Korean National Treasure No. 126), among the earliest surviving woodblock prints.' },
+  'ref.i12': { zh:'<span class="ref-t">《高丽大藏经》</span>（1237—1248 年雕成，八万余块经版，今藏伽耶山海印寺），汉文大藏经精审本。', en:'The <span class="ref-t">Goryeo Tripiṭaka</span> (carved 1237–1248, over 80,000 blocks, now at Haeinsa, Mount Gaya), the most carefully collated Chinese-language canon.' },
+  'ref.i13': { zh:'日本<span class="ref-t">宝篋印塔（ほうきょういんとう）</span>研究，含箱根宝篋印塔（1296，重要文化财）、平等院、唐招提寺鉴真庙、镰仓北条政子墓塔等名塔资料。', en:'Studies of the Japanese <span class="ref-t">hōkyōintō</span>, including the Hakone Hōkyōintō (1296, Important Cultural Property), Byōdō-in, the shrine of Jianzhen at Tōshōdai-ji, and the memorial stupa of Hōjō Masako in Kamakura.' },
+
+  'ref.i14': { zh:'<span class="ref-t">《大唐西域记》</span>（唐·玄奘）、《佛国记》（法显）、《南海寄归内法传》（义净），丝路求法僧行记。', en:'<span class="ref-t">The Great Tang Records on the Western Regions</span> (Xuanzang), <span class="ref-t">A Record of Buddhist Kingdoms</span> (Faxian), and <span class="ref-t">A Record of Buddhist Practices Sent Home from the Southern Seas</span> (Yijing) — the travel accounts of the great pilgrims.' },
+  'ref.i15': { zh:'<span class="ref-t">《金刚经》</span>（868 年，敦煌莫高窟藏经洞出土，现存最早有纪年雕版印本，现藏大英图书馆）。', en:'The <span class="ref-t">Diamond Sutra</span> (868, from the Library Cave at Dunhuang; the earliest dated printed book, now in the British Library).' },
+  'ref.i16': { zh:'法脉东传地图与航路示意参考 <span class="ref-t">wuyuekingdom.com · Wuyue and the Road of the Sutras</span> 及一般历史地图，为示意性绘制，非精确地理测绘。', en:'The dharma-transmission map and sea routes are illustrative, drawing on <span class="ref-t">wuyuekingdom.com · Wuyue and the Road of the Sutras</span> and general historical maps, not precise cartography.' },
+
+  'ref.i17': { zh:'拼音标注由 <span class="ref-t">pinyin-pro</span> 生成（开源拼音库，含佛经专名正音自定义）。', en:'Pinyin annotations are generated by <span class="ref-t">pinyin-pro</span> (open-source pinyin library, with custom readings for Buddhist proper nouns).' },
+  'ref.i18': { zh:'页内图像：<span class="ref-t">雷峰塔旧影</span>、<span class="ref-t">御览西湖胜景全图</span>、<span class="ref-t">《宝箧印经》卷首扉画</span>、出土阿育王塔、经木函、宝箧印塔等，多取自公版或公开馆藏资料，仅作修学与示意之用。', en:'On-page images — the old view of Leifeng Pagoda, the panoramic map of West Lake, the sutra frontispiece, the unearthed Aśoka Stupa, the wooden sutra casket, the hōkyōintō, and others — are drawn from public-domain or publicly held collections, for study and illustration only.' },
+
+  'ref.note': { zh:'说明：本页文献按学术惯例列示，力求标明来源与版本；因部分早期刻本、拓本与图像久已流入公版，或为民间流传拓片，具体馆藏信息难以逐一核验，如有疏漏，敬祈方家指正。本站为佛教文化修学参考，非商业用途，亦不代表任何宗教机构立场。', en:'Note: Sources are listed following scholarly convention, aiming to name each text and edition. As some early prints, rubbings and images have long entered the public domain or circulate privately, the precise holding institution of each cannot always be verified; any omission is regretted and corrections are welcome. This site is a non-commercial reference for Buddhist cultural study and does not represent any religious body.' },
 };
 
 const LANG_KEY = 'baoqieyin_lang_v1';
