@@ -215,93 +215,105 @@ body.night .title-langs .tl-name{color:#d0574a;text-shadow:0 0 14px rgba(208,87,
 .cn{font-family:var(--serif-sc);font-size:.86em;color:var(--cinnabar-deep);letter-spacing:.06em;white-space:nowrap}
 .cn::before{content:"（";color:var(--muted);opacity:.6}
 .cn::after{content:"）";color:var(--muted);opacity:.6}
-/* 未打开经卷 · 入口（经文页默认态，点击展卷）—— 仿古卷实物：浅灰紫背景 + 竖置做旧米黄经卷 */
-.sutra-gate{padding:34px 18px 30px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
-/* 衬底：浅灰紫「棚拍背景纸」+ 白色细描边，仿实拍卡片 */
-.sg-scroll{
-  position:relative;max-width:440px;margin:0 auto;padding:30px 26px 26px;
-  display:flex;align-items:center;justify-content:center;gap:26px;
+/* 未打开经卷 · 入口（经文页默认态，点击展卷）—— 真实卷轴照片 + 点击打开 */
+.sutra-gate{padding:28px 18px 26px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+/* 真实卷轴照片：竖向居中，灰蓝衬底仿收藏机构立轴照 */
+.sg-real{
+  position:relative;max-width:190px;margin:0 auto;
+  padding:18px 18px 16px;
   background:
-    radial-gradient(140% 120% at 50% 20%, #c9c6cb 0%, #bab7bc 55%, #b0adb3 100%);
-  border:1px solid rgba(255,255,255,.55);
+    radial-gradient(140% 120% at 50% 22%, #aab2ba 0%, #9aa3ac 55%, #8a949d 100%);
+  border:1px solid rgba(255,255,255,.5);
   border-radius:4px;
-  box-shadow:0 10px 30px rgba(43,38,32,.16), inset 0 0 0 6px #ffffff;
+  box-shadow:0 12px 32px rgba(43,38,32,.2), inset 0 0 0 6px #f2f2f0;
 }
-.sg-scroll::after{content:"";position:absolute;inset:0;border-radius:4px;pointer-events:none;background:radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(80,76,86,.10) 100%)}
-/* 经卷本体：竖置圆柱，上端略鼓、下端收窄，斑驳做旧 */
-.sg-paper{
-  position:relative;display:block;width:96px;height:230px;flex:none;
-  background:
-    radial-gradient(150% 90% at 0% 50%, rgba(255,246,222,.28) 0%, transparent 55%),
-    radial-gradient(120% 60% at 20% 30%, rgba(120,88,44,.28) 0%, transparent 60%),
-    radial-gradient(130% 70% at 85% 68%, rgba(140,104,54,.32) 0%, transparent 58%),
-    radial-gradient(90% 50% at 72% 15%, rgba(90,116,120,.14) 0%, transparent 55%),
-    radial-gradient(80% 45% at 30% 88%, rgba(102,72,38,.20) 0%, transparent 55%),
-    linear-gradient(90deg,#cbb791 0%,#c2a97f 28%,#b59a6e 55%,#c9b084 78%,#bfa276 100%);
-  border-radius:50px 50px 46px 46px;
-  box-shadow:
-    inset 6px 0 14px rgba(255,246,222,.30),
-    inset -10px 0 22px rgba(84,62,34,.42),
-    inset 0 0 0 1px rgba(96,72,40,.18),
-    6px 6px 18px rgba(60,48,28,.30);
-  transform:rotate(-.4deg);
+.sg-real::after{content:"";position:absolute;inset:0;border-radius:4px;pointer-events:none;background:radial-gradient(130% 90% at 50% 40%, transparent 55%, rgba(40,48,56,.12) 100%)}
+.sg-real img{
+  display:block;width:100%;height:auto;max-height:400px;object-fit:contain;border-radius:2px;
+  box-shadow:0 6px 18px rgba(30,26,20,.3);
+  filter:sepia(.1) contrast(1.02);
 }
-/* 卷面纹理：细划痕 + 纸张纤维 */
-.sg-paper::before{
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:
-    repeating-linear-gradient(90deg, rgba(88,66,38,.05) 0 1px, transparent 1px 7px),
-    repeating-linear-gradient(0deg, rgba(88,66,38,.03) 0 1px, transparent 1px 11px);
-  mix-blend-mode:multiply;
-}
-/* 底部翻翘的纸边（未卷紧的纸页分层） */
-.sg-paper::after{
-  content:"";position:absolute;left:12%;right:10%;bottom:-7px;height:14px;
-  background:linear-gradient(180deg,#d7c29a,#cfb887);
-  border-radius:0 0 10px 10px;
-  box-shadow:inset 0 -3px 6px rgba(84,62,34,.30), 0 2px 4px rgba(60,48,28,.22);
-  clip-path:polygon(0 0,100% 0,96% 100%,60% 78%,22% 100%,0 70%);
-  opacity:.9;
-}
-/* 顶端朱红轴头（破损残段）—— 置于卷面之上，上端露出 */
-.sg-roll-r{
-  position:absolute;top:2px;left:50%;transform:translateX(-50%);
-  width:44px;height:24px;border-radius:11px;z-index:3;
-  background:linear-gradient(90deg,#bd5141,#963a2b 55%,#7a2d20);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.22), inset 0 -5px 9px rgba(44,16,10,.55), 0 3px 7px rgba(43,38,32,.4);
-}
-.sg-roll-r::before{content:"";position:absolute;inset:5px 4px;border-radius:8px;border:1px solid rgba(255,232,210,.20)}
-/* 底端收窄卷尾（内层浅色纸芯）—— 置于卷面之上，下端微露 */
-.sg-roll-l{
-  position:absolute;bottom:2px;left:50%;transform:translateX(-50%);
-  width:36px;height:20px;border-radius:9px;z-index:3;
-  background:linear-gradient(90deg,#e8d9b6,#d6c39a 60%,#c2ad82);
-  box-shadow:inset 0 -3px 6px rgba(84,62,34,.34), 0 2px 5px rgba(43,38,32,.28);
-}
-/* 残印（淡蓝/淡红印渍） */
-.sg-blot{position:absolute;border-radius:50%;filter:blur(.4px);opacity:.5;pointer-events:none}
-.sg-blot.b1{left:26%;top:22%;width:20px;height:24px;background:rgba(86,110,128,.20)}
-.sg-blot.b2{left:62%;top:58%;width:14px;height:18px;background:rgba(150,62,46,.16)}
-.sg-blot.b3{left:44%;top:80%;width:22px;height:10px;background:rgba(120,90,50,.16)}
-/* 标题：经卷旁竖排墨字（浓墨，手写感） */
-.sg-title{
-  writing-mode:vertical-rl;text-align:left;
-  font-family:"Kaiti SC","STKaiti","KaiTi","Noto Serif SC",serif;
-  font-size:24px;font-weight:700;line-height:1.55;letter-spacing:.1em;
-  color:#2a2118;text-shadow:0 1px 0 rgba(255,246,222,.28);
-  opacity:.92;max-height:230px;
-}
-.sg-hint{margin-top:22px;font-size:12px;letter-spacing:.3em;text-indent:.3em;color:var(--cinnabar-deep)}
+.sg-hint{margin-top:20px;font-size:13px;letter-spacing:.4em;text-indent:.4em;color:var(--cinnabar-deep);font-weight:600}
+.sg-hint::after{content:"›";margin-left:6px;color:var(--cinnabar);font-weight:400}
 /* 展卷动画：点击后经卷入口淡出上移，经文正文淡入 */
 .sutra-gate.closing{animation:sgClose .5s cubic-bezier(.5,.1,.3,1) both}
 @keyframes sgClose{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-18px) scale(.97)}}
 #sutra-body.reveal{animation:sgBodyIn .7s ease both}
 @keyframes sgBodyIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-body.night .sg-scroll{background:radial-gradient(140% 120% at 50% 20%, #3a3740 0%, #312e36 55%, #2a2730 100%);box-shadow:0 10px 30px rgba(0,0,0,.5), inset 0 0 0 6px #1a1820}
-body.night .sg-scroll::after{background:radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(0,0,0,.3) 100%)}
-body.night .sg-paper{background:linear-gradient(90deg,#5a4b32 0%,#4e4028 30%,#443621 55%,#54452e 80%,#4a3b25 100%);box-shadow:inset 6px 0 14px rgba(255,240,210,.10), inset -10px 0 22px rgba(0,0,0,.5), inset 0 0 0 1px rgba(200,170,120,.14), 6px 6px 18px rgba(0,0,0,.5)}
-body.night .sg-title{color:#d8c9a6;text-shadow:0 1px 0 rgba(0,0,0,.4)}
-body.night .sg-roll-l{background:linear-gradient(90deg,#6a5a3c,#5a4b30 60%,#4a3d26)}
+
+/* ============ 展开卷轴动画层（从右向左铺展） ============ */
+.sutra-unroll{
+  position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;
+  background:rgba(30,25,18,.72);backdrop-filter:blur(4px);padding:20px;
+}
+.sutra-unroll.show{display:flex}
+.sutra-unroll .su-stage{
+  position:relative;width:min(92vw,440px);height:min(66vw,300px);
+  perspective:1200px;overflow:hidden;
+  border-radius:6px;box-shadow:0 18px 50px rgba(0,0,0,.5);
+}
+/* 做旧卷纸：以右侧为锚点，从右向左展开 */
+.sutra-unroll .su-sheet{
+  position:absolute;top:0;right:0;height:100%;width:0;
+  transform-origin:right center;
+  background:
+    radial-gradient(80% 120% at 15% 20%, rgba(255,246,222,.30) 0%, transparent 55%),
+    radial-gradient(70% 100% at 80% 70%, rgba(140,104,54,.28) 0%, transparent 60%),
+    radial-gradient(50% 80% at 40% 85%, rgba(102,72,38,.18) 0%, transparent 55%),
+    linear-gradient(90deg,#c7af83 0%,#cbb791 30%,#c2a97f 60%,#b59a6e 100%);
+  box-shadow:inset 0 6px 14px rgba(255,246,222,.26), inset 0 -10px 22px rgba(84,62,34,.4);
+  animation:suUnroll 1.6s cubic-bezier(.25,.7,.2,1) forwards;
+}
+@keyframes suUnroll{
+  0%{width:0}
+  60%{width:96%}
+  100%{width:96%}
+}
+.sutra-unroll .su-sheet::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(90deg, rgba(88,66,38,.05) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(0deg, rgba(88,66,38,.03) 0 1px, transparent 1px 12px);
+  mix-blend-mode:multiply;
+}
+/* 卷首扉画：随纸张铺展而自右向左显现 */
+.sutra-unroll .su-fp{
+  position:absolute;top:8%;bottom:8%;right:3%;width:0;overflow:hidden;
+  animation:suReveal 1.6s cubic-bezier(.25,.7,.2,1) forwards;
+}
+@keyframes suReveal{0%{width:0}60%{width:88%}100%{width:88%}}
+.sutra-unroll .su-fp img{display:block;height:100%;width:auto;object-fit:cover;object-position:left center;filter:sepia(.3) contrast(1.03)}
+/* 右侧卷轴头（朱红） */
+.sutra-unroll .su-roller{
+  position:absolute;top:4%;bottom:4%;right:-2px;width:16px;z-index:3;
+  background:linear-gradient(180deg,#bd5141,#963a2b 55%,#7a2d20);
+  border-radius:8px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22), inset 0 -4px 8px rgba(44,16,10,.5), 0 3px 8px rgba(0,0,0,.4);
+}
+/* 展开时轴头向左滚动（模拟转轴） */
+.sutra-unroll.show .su-roller{animation:suRoller 1.6s ease forwards}
+@keyframes suRoller{0%{transform:translateX(0)}100%{transform:translateX(calc(-1 * min(92vw,440px) + 40px))}}
+/* 卷首题记（自右向左淡入） */
+.sutra-unroll .su-cap{
+  position:absolute;left:4%;bottom:6%;max-width:70%;text-align:left;opacity:0;
+  font-family:"Kaiti SC","STKaiti","KaiTi","Noto Serif SC",serif;
+  font-size:12px;line-height:1.9;letter-spacing:.06em;color:#2a2118;
+  animation:suCapIn 1.1s ease .55s forwards;
+}
+@keyframes suCapIn{from{opacity:0;transform:translateX(-10px)}to{opacity:.92;transform:none}}
+.sutra-unroll .su-cap .su-cap-t{font-weight:700;font-size:13px;color:#4a2f16}
+.sutra-unroll .su-tip{
+  position:absolute;left:0;right:0;bottom:-34px;text-align:center;opacity:0;
+  font-size:11px;letter-spacing:.3em;text-indent:.3em;color:#d8c29a;
+  animation:suTipIn 1s ease 1.1s forwards;
+}
+@keyframes suTipIn{from{opacity:0}to{opacity:.8}}
+/* 展开完成后整层淡出 */
+.sutra-unroll.done{animation:suOut .5s ease forwards}
+@keyframes suOut{from{opacity:1}to{opacity:0}}
+body.night .sutra-unroll{background:rgba(15,13,10,.8)}
+body.night .sg-real{background:radial-gradient(140% 120% at 50% 22%, #333a42 0%, #2c333b 55%, #262d34 100%);box-shadow:0 12px 32px rgba(0,0,0,.6), inset 0 0 0 6px #1a1c20}
+body.night .sg-real::after{background:radial-gradient(130% 90% at 50% 40%, transparent 55%, rgba(0,0,0,.35) 100%)}
+body.night .sg-real img{box-shadow:0 6px 18px rgba(0,0,0,.5)}
 .pad{margin-bottom:22px;font-size:15px;line-height:2.15;letter-spacing:.06em;text-align:justify;color:var(--ink);transition:background .4s ease}
 .pad.indent{text-indent:2em}
 .pad .note{color:var(--muted);font-size:12.5px}
@@ -1825,22 +1837,26 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
       <button class="tab" data-slang="bi" data-page-node-id="MlqOHBCDsiQeyYLei9iYD8">中英对照</button>
     </div>
 
-    <!-- 未打开经卷 · 入口（点击展卷，展示经卷原文）—— 仿古卷实物：竖置经卷 + 旁侧经名 -->
-    <div class="sutra-gate" id="sutra-gate" onclick="openSutraScroll()" role="button" aria-label="展卷 · 开启经文">
-      <div class="sg-scroll">
-        <i class="sg-blot b1"></i>
-        <i class="sg-blot b2"></i>
-        <i class="sg-blot b3"></i>
-        <span class="sg-paper">
-          <span class="sg-roll-r"></span>
-          <span class="sg-roll-l"></span>
-        </span>
-        <b class="sg-title">一切如来心秘密全身舍利宝箧印陀罗尼经</b>
-      </div>
-      <div class="sg-hint">轻 触 展 卷 · 开 经 诵 读</div>
+    <!-- 未打开经卷 · 入口（点击展卷，展示经卷原文）—— 真实卷轴照片 + 点击打开 -->
+    <div class="sutra-gate" id="sutra-gate" onclick="openSutraScroll()" role="button" aria-label="点击打开经卷">
+      <figure class="sg-real">
+        <img src="assets/sutra-roll.jpg" alt="全身舍利经 · 未打开经卷" draggable="false"/>
+      </figure>
+      <div class="sg-hint">点 击 打 开</div>
     </div>
 
     <div class="dharma-body" id="sutra-body" style="display:none" data-page-node-id="JKu6S6Ud9kKq232thAGCFt"></div>
+
+    <!-- 展开卷轴动画层（从右向左铺展） -->
+    <div class="sutra-unroll" id="sutra-unroll" aria-hidden="true">
+      <div class="su-stage">
+        <span class="su-roller"></span>
+        <span class="su-sheet"></span>
+        <span class="su-fp"><img src="assets/scroll-1.jpg" alt="卷首扉画"></span>
+        <span class="su-cap"><span class="su-cap-t">大 兵 马 大 元 帅 · 吴 越 国 王 钱 俶</span><br>造此经八万四千卷 · 舍入西关砖塔永充供养</span>
+        <span class="su-tip">展 卷 · 自 右 而 左</span>
+      </div>
+    </div>
 
     <!-- 经文页底部·内嵌计数 -->
     <div class="embed-counter" data-page-node-id="tylC2xSSGNSrFPe3F7GmE5">
@@ -2937,15 +2953,40 @@ setInterval(rotateQuote,9000);
 let sutraMode='sutra', dharaniLang='tri', sutraLang='zh', vertical=false;
 let sutraOpened = false;   /* 经文页是否已「展卷」：控制未打开经卷入口 vs 经卷正文 */
 
-/* 点击未打开的经卷 → 展卷，展示经卷正文（原文 + 分卷图） */
+/* 点击未打开的经卷 → 展卷动画（从右向左铺展）→ 展示经卷正文（原文 + 分卷图） */
 function openSutraScroll(){
   if(sutraOpened) return;
   const gate = document.getElementById('sutra-gate');
   const body = document.getElementById('sutra-body');
+  const unroll = document.getElementById('sutra-unroll');
   if(!gate || !body) return;
   sutraOpened = true;
+
+  /* 1. 经卷入口淡出 */
   gate.classList.add('closing');
   setTimeout(function(){ if(gate) gate.style.display = 'none'; }, 500);
+
+  /* 2. 播放卷轴展开动画（从右向左） */
+  if(unroll){
+    unroll.classList.remove('done');
+    unroll.classList.add('show');
+    /* 动画结束后整层淡出 */
+    setTimeout(function(){
+      if(unroll) unroll.classList.add('done');
+    }, 1800);
+    /* 淡出完成后移除，并显示正文 */
+    setTimeout(function(){
+      if(unroll) unroll.classList.remove('show','done');
+      if(body){
+        body.style.display = '';
+        body.classList.remove('reveal'); void body.offsetWidth; body.classList.add('reveal');
+        try{ window.scrollTo({top:0, behavior:'smooth'}); }catch(e){}
+      }
+    }, 2350);
+    return;
+  }
+
+  /* 兜底：无动画层时直接显示正文 */
   body.style.display = '';
   body.classList.remove('reveal'); void body.offsetWidth; body.classList.add('reveal');
   try{ window.scrollTo({top:0, behavior:'smooth'}); }catch(e){}
