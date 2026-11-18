@@ -217,9 +217,9 @@ body.night .title-langs .tl-name{color:#d0574a;text-shadow:0 0 14px rgba(208,87,
 .cn::after{content:"）";color:var(--muted);opacity:.6}
 /* 未打开经卷 · 入口（经文页默认态，点击展卷）—— 真实卷轴照片 + 点击打开 */
 .sutra-gate{padding:28px 18px 26px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
-/* 真实卷轴照片：竖向居中，灰蓝衬底仿收藏机构立轴照 */
+/* 真实卷轴照片：横向居中，灰蓝衬底仿收藏机构立轴照 */
 .sg-real{
-  position:relative;max-width:190px;margin:0 auto;
+  position:relative;max-width:300px;margin:0 auto;
   padding:18px 18px 16px;
   background:
     radial-gradient(140% 120% at 50% 22%, #aab2ba 0%, #9aa3ac 55%, #8a949d 100%);
@@ -229,7 +229,7 @@ body.night .title-langs .tl-name{color:#d0574a;text-shadow:0 0 14px rgba(208,87,
 }
 .sg-real::after{content:"";position:absolute;inset:0;border-radius:4px;pointer-events:none;background:radial-gradient(130% 90% at 50% 40%, transparent 55%, rgba(40,48,56,.12) 100%)}
 .sg-real img{
-  display:block;width:100%;height:auto;max-height:400px;object-fit:contain;border-radius:2px;
+  display:block;width:100%;height:auto;max-height:260px;object-fit:contain;border-radius:2px;
   box-shadow:0 6px 18px rgba(30,26,20,.3);
   filter:sepia(.1) contrast(1.02);
 }
@@ -1884,7 +1884,7 @@ body.night .dabao-link::before{background:radial-gradient(ellipse at center,rgba
     <!-- 未打开经卷 · 入口（点击/拖拽展卷，展示经卷原文）—— 真实卷轴照片 + 手动展卷 -->
     <div class="sutra-gate" id="sutra-gate" onclick="openSutraScroll()" role="button" aria-label="点击打开经卷">
       <figure class="sg-real">
-        <img src="assets/sutra-roll.jpg" alt="全身舍利经 · 未打开经卷" draggable="false"/>
+        <img src="assets/sutra-roll-new.jpg" alt="全身舍利经 · 未打开经卷" draggable="false"/>
       </figure>
       <div class="sg-hint">点 击 打 开 · 亦 可 拖 拽</div>
     </div>
